@@ -2,6 +2,7 @@
 #include "lib.h"
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 double uniform(){
   static int init_flg = 0;
@@ -11,10 +12,14 @@ double uniform(){
   }
   return ((double)rand()+1.0)/((double)RAND_MAX+2.0);
 }
-__float128 rand_normal(__float128 m, __float128 s){
+double rand_normal_double(double m, double s){
+    double z = sqrt(-2.0*log(uniform()))*sin(2.0*M_PI*uniform());
+    return m + s*z;
+}
+__float128 rand_normal_float_128(__float128 m, __float128 s){
     __float128 z = sqrtq(-2.0*logq(uniform()))*sinq(2.0*M_PIq*uniform());
     return m + s*z;
- }
+}
 __float128 random_float_128(__float128 range){
   __float128 r = 0.0Q;
   r += uniform();
@@ -44,15 +49,17 @@ void generate_vector_complex128(__complex128 vec[MATRIX_SIZE], __float128 range)
 
 void generate_matrix_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;
-  //for(i=0; i<MATRIX_SIZE; i++)
-  //  for(j=0; j<MATRIX_SIZE; j++)
-  //    mat[i][j] = random_float_128(range);
   for(i=0; i<MATRIX_SIZE; i++)
     for(j=0; j<MATRIX_SIZE; j++)
-      if(i <= j)
+      mat[i][j] = random_float_128(range);
+  /*
+  for(i=0; i<MATRIX_SIZE; i++)
+    for(j=0; j<MATRIX_SIZE; j++)
+      if(i == j)
         mat[i][j] = 1.0Q;//random_float_128(range);
       else
         mat[i][j] = 0.0Q;
+  */
 }
 void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;

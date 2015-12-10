@@ -5,7 +5,8 @@
 
 // return: random value
 double uniform();
-__float128 rand_normal(__float128 m, __float128 s);
+double rand_normal_double(double m, double s);
+__float128 rand_normal_float_128(__float128 m, __float128 s);
 __float128 random_float_128(__float128 range);
 __complex128 random_complex_128(__float128 range);
 

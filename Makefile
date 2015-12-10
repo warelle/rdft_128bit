@@ -23,6 +23,8 @@ $(LIBOBJ): eigen.cpp eigen.h $(TESTER)
 
 .c.o: $(TESTER)
 	$(CC) $(CFLAGS) -c $<
+.cpp.o: $(TESTER)
+	$(CC) $(CFLAGS) -c $<
 
 .PHONY: clean
 clean:
