@@ -21,6 +21,10 @@
 #define PP                 64
 #define PP_ITERATION       128
 
+int general_counter_0 = 0;
+int general_counter_1 = 0;
+int general_counter_2 = 0;
+int general_counter_3 = 0;
 
 __float128 a[MATRIX_SIZE][MATRIX_SIZE];
 __float128 b[MATRIX_SIZE];
@@ -81,6 +85,7 @@ std::complex<double> dc_xi[MATRIX_SIZE];
 std::complex<double> dc_xa[MATRIX_SIZE];
 double d_a[MATRIX_SIZE][MATRIX_SIZE];
 double d_b[MATRIX_SIZE];
+double d_b_with_round_error[MATRIX_SIZE];
 double d_x[MATRIX_SIZE];
 double d_x_rdft[MATRIX_SIZE];
 double d_x_rdft_iter[MATRIX_SIZE];
@@ -94,6 +99,9 @@ double d_x_gauss_iter_another[MATRIX_SIZE];
 double d_x_pp[MATRIX_SIZE];
 double d_x_pp_iter[MATRIX_SIZE];
 double d_x_pp_iter_another[MATRIX_SIZE];
+double d_x_pp_with_round_error[MATRIX_SIZE];
+double d_x_pp_iter_with_round_error[MATRIX_SIZE];
+double d_x_pp_iter_another_with_round_error[MATRIX_SIZE];
 
 double d_x_rdft_dif[MATRIX_SIZE];
 double d_x_rdft_iter_dif[MATRIX_SIZE];
@@ -107,6 +115,9 @@ double d_x_gauss_iter_another_dif[MATRIX_SIZE];
 double d_x_pp_dif[MATRIX_SIZE];
 double d_x_pp_iter_dif[MATRIX_SIZE];
 double d_x_pp_iter_another_dif[MATRIX_SIZE];
+double d_x_pp_with_round_error_dif[MATRIX_SIZE];
+double d_x_pp_iter_with_round_error_dif[MATRIX_SIZE];
+double d_x_pp_iter_with_round_error_another_dif[MATRIX_SIZE];
 
 double d_rdft_err;
 double d_rdft_iter_err;
@@ -120,6 +131,9 @@ double d_gauss_iter_another_err;
 double d_pp_err;
 double d_pp_iter_err;
 double d_pp_iter_another_err;
+double d_pp_with_round_error_err;
+double d_pp_iter_with_round_error_err;
+double d_pp_iter_another_with_round_error_err;
 
 void run_64bit(int dat, int opt, int exe){
   generate_linear_system_float_128(a,x,100.0Q);
@@ -129,6 +143,7 @@ void run_64bit(int dat, int opt, int exe){
   down_cast_mat_float128(a,a);
   down_cast_vec_float128(x,x);
   mat_vec_dot_float128(a,x,b);
+  mat_vec_dot_double(d_a,d_x,d_b_with_round_error);
 
   cast_vec_float128_to_double(b,d_b);
 
@@ -164,6 +179,14 @@ void run_64bit(int dat, int opt, int exe){
     d_pp_err   = vector_norm_double(d_x_pp_dif);
     d_pp_iter_err   = vector_norm_double(d_x_pp_iter_dif);
     d_pp_iter_another_err   = vector_norm_double(d_x_pp_iter_another_dif);
+
+    solve_with_partial_pivot_double(d_a,d_b_with_round_error,d_x_pp_with_round_error, d_x_pp_iter_with_round_error, d_x_pp_iter_another_with_round_error);
+    vec_sub_double(d_x,d_x_pp_with_round_error,d_x_pp_with_round_error_dif);
+    vec_sub_double(d_x,d_x_pp_iter_with_round_error,d_x_pp_iter_with_round_error_dif);
+    vec_sub_double(d_x,d_x_pp_iter_another_with_round_error,d_x_pp_iter_with_round_error_another_dif);
+    d_pp_with_round_error_err  = vector_norm_double(d_x_pp_with_round_error_dif);
+    d_pp_iter_with_round_error_err = vector_norm_double(d_x_pp_iter_with_round_error_dif);
+    d_pp_iter_another_with_round_error_err = vector_norm_double(d_x_pp_iter_with_round_error_another_dif);
   }
 
   cast_mat_float128_to_double(a,double_a);
@@ -198,6 +221,15 @@ void run_64bit(int dat, int opt, int exe){
     printf("Partial Pivot  :");
     print_double(d_pp_iter_another_err);
     printf("\n");
+    printf("Partial Pivot d:");
+    print_double(d_pp_with_round_error_err);
+    printf("\n");
+    printf("Partial Pivot d:");
+    print_double(d_pp_iter_with_round_error_err);
+    printf("\n");
+    printf("Partial Pivot d:");
+    print_double(d_pp_iter_another_with_round_error_err);
+    printf("\n");
   }else if(opt == 1){ // graph data
     if(condition_number(double_a,NULL) > 15000)
       return;
@@ -219,6 +251,12 @@ void run_64bit(int dat, int opt, int exe){
     print_double(d_pp_iter_err);
     printf(" ");
     print_double(d_pp_iter_another_err);
+    printf(" ");
+    print_double(d_pp_with_round_error_err);
+    printf(" ");
+    print_double(d_pp_iter_with_round_error_err);
+    printf(" ");
+    print_double(d_pp_iter_another_with_round_error_err);
     printf("\n");
   }else if(opt == 2){
     printf("condition number:");
@@ -253,6 +291,14 @@ void run_64bit(int dat, int opt, int exe){
       printf("Partial Pivot  :");
       print_double(d_pp_err);
       printf("\n");
+      printf("Partial Pivot d:");
+      print_double(d_pp_with_round_error_err);
+      printf("\n");
+      if(d_pp_err < d_pp_with_round_error_err){
+        general_counter_0++; // no rounding is good
+      }else{
+        general_counter_1++; // rounding   is good
+      }
     }
     if(exe & PP_ITERATION){
       printf("Partial Pivot  :");
@@ -261,6 +307,17 @@ void run_64bit(int dat, int opt, int exe){
       printf("Partial Pivot  :");
       print_double(d_pp_iter_another_err);
       printf("\n");
+      printf("Partial Pivot d:");
+      print_double(d_pp_iter_with_round_error_err);
+      printf("\n");
+      printf("Partial Pivot d:");
+      print_double(d_pp_iter_another_with_round_error_err);
+      printf("\n");
+      if(d_pp_iter_err < d_pp_iter_with_round_error_err){
+        general_counter_2++; // no rounding is good
+      }else{
+        general_counter_3++; // rounding   is good
+      }
     }
   }
 }
@@ -479,9 +536,14 @@ extern __complex128 c_fra[MATRIX_SIZE][MATRIX_SIZE];
 
 int main(){
   int i;
+  //int exe = RDFT | RDFT_ITERATION | DHT | DHT_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
+  int exe = PP | PP_ITERATION;
   for(i=0; i<100; i++){
-    int exe = RDFT | RDFT_ITERATION | DHT | DHT_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
-    run_64bit(i,1,exe);
+    run_64bit(i,2,exe);
+  }
+  if((exe^(PP | PP_ITERATION)) == 0){
+    printf("Non-err  :%d:With-Rerr:%d\n", general_counter_0, general_counter_1);
+    printf("Non-err  :%d:With-Rerr:%d\n", general_counter_2, general_counter_3);
   }
 
   //for(i=0; i<50; i++){
