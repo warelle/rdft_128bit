@@ -14,6 +14,8 @@ void r_matrix_complex_double(std::complex<double> r[MATRIX_SIZE][MATRIX_SIZE]);
 void dft_matrix_complex_128(__complex128 f[MATRIX_SIZE][MATRIX_SIZE]);
 void dht_matrix(__float128 f[MATRIX_SIZE][MATRIX_SIZE]);
 void gauss_matrix_float128(__float128 f[MATRIX_SIZE][MATRIX_SIZE]);
+void r_perm_matrix_complex_double(std::complex<double> r[MATRIX_SIZE][MATRIX_SIZE]);
+void r_perm_matrix_complex_128(__complex128 r[MATRIX_SIZE][MATRIX_SIZE]);
 void r_matrix_complex_128(__complex128 r[MATRIX_SIZE][MATRIX_SIZE]);
 void r_real_matrix(__float128 r[MATRIX_SIZE][MATRIX_SIZE]);
 

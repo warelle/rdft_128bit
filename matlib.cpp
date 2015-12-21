@@ -228,6 +228,16 @@ void print_vector_double(double f[MATRIX_SIZE]){
   printf("]");
   printf("\n");
 }
+void print_vector_complex_double(std::complex<double> f[MATRIX_SIZE]){
+  int i;
+  printf("[");
+  for(i=0; i<MATRIX_SIZE; i++){
+    printf("%f+%fj",std::real(f[i]),std::imag(f[i]));
+    printf(" ");
+  }
+  printf("]");
+  printf("\n");
+}
 void print_vector_float128(__float128 f[MATRIX_SIZE]){
   int i;
   printf("[");
@@ -259,6 +269,21 @@ void print_matrix_double(double f[MATRIX_SIZE][MATRIX_SIZE]){
       printf(" ");
     }
     printf("]");
+  }
+  printf("]");
+  printf("\n");
+}
+void print_matrix_complex_double(std::complex<double> f[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  printf("[");
+  for(i=0; i<MATRIX_SIZE; i++){
+    printf("[");
+    for(j=0; j<MATRIX_SIZE; j++){
+      printf("%f+%fj",std::real(f[i][j]),std::imag(f[i][j]));
+      printf(" ");
+    }
+    printf("]");
+    printf("\n");
   }
   printf("]");
   printf("\n");

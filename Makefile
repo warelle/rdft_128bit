@@ -1,7 +1,7 @@
 # Makefile
 
 PROGRAM = main
-OBJ     = main.o lu.o lib.o gen.o rdft.o matlib.o solve.o
+OBJ     = main.o lu.o lib.o gen.o rdft.o matlib.o givens.o solve.o
 TESTER  = test.h
 CC      = g++
 CFLAGS  = -Wall -O2 -std=gnu++11

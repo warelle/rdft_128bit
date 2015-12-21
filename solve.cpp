@@ -2,11 +2,14 @@
 #include "lu.h"
 #include "rdft.h"
 #include "matlib.h"
+#include "givens.h"
 #include <cstdio>
+
 
 // solving
 __complex128 c_f[MATRIX_SIZE][MATRIX_SIZE];
 __complex128 c_r[MATRIX_SIZE][MATRIX_SIZE];
+__complex128 c_rp[MATRIX_SIZE][MATRIX_SIZE];
 __complex128 c_fr[MATRIX_SIZE][MATRIX_SIZE];
 __complex128 c_fra[MATRIX_SIZE][MATRIX_SIZE];
 __complex128 c_l[MATRIX_SIZE][MATRIX_SIZE];
@@ -34,12 +37,17 @@ double d_frb[MATRIX_SIZE];
 
 std::complex<double> cd_f[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_r[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_rp[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_rgivens[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_rgivens_sub[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_fr[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_frg[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_fra[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_l[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_u[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_y[MATRIX_SIZE];
 std::complex<double> cd_frb[MATRIX_SIZE];
+std::complex<double> cd_tmp[MATRIX_SIZE][MATRIX_SIZE];
 
 // partial pivot
 double d_fa[MATRIX_SIZE][MATRIX_SIZE];
@@ -165,7 +173,7 @@ void solve_with_partial_pivot_float128(__float128 a[MATRIX_SIZE][MATRIX_SIZE], _
 
 void iteration_double(double a[MATRIX_SIZE][MATRIX_SIZE], double l[MATRIX_SIZE][MATRIX_SIZE], double u[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_double(a,x,d_ax);
@@ -177,7 +185,7 @@ void iteration_double(double a[MATRIX_SIZE][MATRIX_SIZE], double l[MATRIX_SIZE][
 }
 void iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> l[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> u[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_complex_double(a,x,cd_ax);
@@ -189,7 +197,7 @@ void iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], 
 }
 void iteration_float128(__float128 a[MATRIX_SIZE][MATRIX_SIZE], __float128 l[MATRIX_SIZE][MATRIX_SIZE], __float128 u[MATRIX_SIZE][MATRIX_SIZE], __float128 b[MATRIX_SIZE], __float128 x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_float128(a,x,f_ax);
@@ -201,7 +209,7 @@ void iteration_float128(__float128 a[MATRIX_SIZE][MATRIX_SIZE], __float128 l[MAT
 }
 void iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128 l[MATRIX_SIZE][MATRIX_SIZE], __complex128 u[MATRIX_SIZE][MATRIX_SIZE], __complex128 b[MATRIX_SIZE], __complex128 x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_complex128(a,x,c_ax);
@@ -213,7 +221,7 @@ void iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128
 }
 void iteration_double_another(double f[MATRIX_SIZE][MATRIX_SIZE], double a[MATRIX_SIZE][MATRIX_SIZE], double l[MATRIX_SIZE][MATRIX_SIZE], double u[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_double(a,x,d_ax);
@@ -226,7 +234,7 @@ void iteration_double_another(double f[MATRIX_SIZE][MATRIX_SIZE], double a[MATRI
 }
 void iteration_complex_double_another(std::complex<double> f[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> l[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> u[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_complex_double(a,x,cd_ax);
@@ -239,7 +247,7 @@ void iteration_complex_double_another(std::complex<double> f[MATRIX_SIZE][MATRIX
 }
 void iteration_float128_another(__float128 f[MATRIX_SIZE][MATRIX_SIZE], __float128 a[MATRIX_SIZE][MATRIX_SIZE], __float128 l[MATRIX_SIZE][MATRIX_SIZE], __float128 u[MATRIX_SIZE][MATRIX_SIZE], __float128 b[MATRIX_SIZE], __float128 x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_float128(a,x,f_ax);
@@ -252,7 +260,7 @@ void iteration_float128_another(__float128 f[MATRIX_SIZE][MATRIX_SIZE], __float1
 }
 void iteration_complex128_another(__complex128 f[MATRIX_SIZE][MATRIX_SIZE], __complex128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128 l[MATRIX_SIZE][MATRIX_SIZE], __complex128 u[MATRIX_SIZE][MATRIX_SIZE], __complex128 b[MATRIX_SIZE], __complex128 x[MATRIX_SIZE]){
   int itera = 0;
-  int iteramax = 1;
+  int iteramax = ITER_MAX;
 
   while(itera++ < iteramax){
     mat_vec_dot_complex128(a,x,c_ax);
@@ -307,6 +315,135 @@ void solve_with_rdft_iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX_SIZ
 
   iteration_complex128(c_fra, c_l, c_u, c_frb, xi);
   iteration_complex128_another(c_fr, a, c_l, c_u, b, xia);
+}
+void solve_with_rdft_mod_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE]){
+  int i;
+
+  dft_matrix_complex_double(cd_f);
+  r_perm_matrix_complex_double(cd_rp);
+  mat_mul_complex_double(cd_f,cd_rp,cd_fr);
+  mat_mul_complex_double(cd_fr,a,cd_fra);
+  mat_vec_dot_complex_double(cd_fr,b,cd_frb);
+
+  lu_complex_double(cd_fra, cd_l, cd_u);
+
+  l_step_complex_double(cd_l, cd_frb, cd_y);
+  u_step_complex_double(cd_u, cd_y, x);
+
+  for(i=0; i<MATRIX_SIZE; i++){
+    xi[i] = x[i];
+    xia[i] = x[i];
+  }
+
+  iteration_complex_double(cd_fra, cd_l, cd_u, cd_frb, xi);
+  iteration_complex_double_another(cd_fr, a, cd_l, cd_u, b, xia);
+}
+void solve_with_rdft_mod_iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128 b[MATRIX_SIZE], __complex128 x[MATRIX_SIZE], __complex128 xi[MATRIX_SIZE], __complex128 xia[MATRIX_SIZE]){
+  int i;
+
+  dft_matrix_complex_128(c_f);
+  r_perm_matrix_complex_128(c_rp);
+  mat_mul_complex128(c_f,c_rp,c_fr);
+  mat_mul_complex128(c_fr,a,c_fra);
+  mat_vec_dot_complex128(c_fr,b,c_frb);
+
+  lu_complex128(c_fra, c_l, c_u);
+
+  l_step_complex128(c_l, c_frb, c_y);
+  u_step_complex128(c_u, c_y, x);
+
+  for(i=0; i<MATRIX_SIZE; i++){
+    xi[i] = x[i];
+    xia[i] = x[i];
+  }
+
+  iteration_complex128(c_fra, c_l, c_u, c_frb, xi);
+  iteration_complex128_another(c_fr, a, c_l, c_u, b, xia);
+}
+void solve_with_rdft_givens_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE]){
+  int i;
+  givens_matrix_list *gml;
+
+  dft_matrix_complex_double(cd_f);
+  r_matrix_complex_double(cd_r);
+  gml = r_givens_matrix_double();
+  mat_mul_complex_double(cd_f,cd_r,cd_fr);
+  mat_mul_givens_right_complex_double(cd_fr,gml,cd_frg);
+  mat_mul_complex_double(cd_frg,a,cd_fra);
+  mat_vec_dot_complex_double(cd_frg,b,cd_frb);
+
+  lu_complex_double(cd_fra, cd_l, cd_u);
+
+  l_step_complex_double(cd_l, cd_frb, cd_y);
+  u_step_complex_double(cd_u, cd_y, x);
+
+  for(i=0; i<MATRIX_SIZE; i++){
+    xi[i] = x[i];
+    xia[i] = x[i];
+  }
+
+  iteration_complex_double(cd_fra, cd_l, cd_u, cd_frb, xi);
+  iteration_complex_double_another(cd_frg, a, cd_l, cd_u, b, xia);
+}
+void iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> l[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> u[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], givens_matrix_list *gml){
+  int itera = 0;
+  int iteramax = ITER_MAX;
+
+  while(itera++ < iteramax){
+    mat_vec_dot_complex_double(a,x,cd_ax);
+    vec_sub_complex_double(b,cd_ax,cd_w);
+    l_step_complex_double(l,cd_w,cd_v);
+    u_step_complex_double(u,cd_v,cd_z);
+    mat_vec_dot_givens_complex_double(gml, cd_z, cd_v);
+    vec_add_complex_double(x,cd_v,x);
+  }
+}
+void iteration_both_complex_double_another(std::complex<double> f[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> l[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> u[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], givens_matrix_list *gml){
+  int itera = 0;
+  int iteramax = ITER_MAX;
+
+  while(itera++ < iteramax){
+    mat_vec_dot_complex_double(a,x,cd_ax);
+    vec_sub_complex_double(b,cd_ax,cd_w);
+    mat_vec_dot_complex_double(f,cd_w,cd_ax);
+    l_step_complex_double(l,cd_ax,cd_v);
+    u_step_complex_double(u,cd_v,cd_z);
+    mat_vec_dot_givens_complex_double(gml, cd_z, cd_v);
+    vec_add_complex_double(x,cd_v,x);
+  }
+}
+void solve_with_rdft_both_givens_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE]){
+  int i;
+  givens_matrix_list *gml1, *gml2;
+
+  dft_matrix_complex_double(cd_f);
+  r_matrix_complex_double(cd_r);
+  gml1 = r_givens_matrix_double();
+  gml2 = r_givens_matrix_double();
+  mat_mul_complex_double(cd_f,cd_r,cd_fr);
+  mat_mul_givens_right_complex_double(cd_fr, gml1, cd_frg);
+  mat_mul_complex_double(cd_frg,a,cd_fra);
+  mat_mul_givens_right_complex_double(cd_fra, gml2, cd_tmp);
+  mat_vec_dot_complex_double(cd_frg,b,cd_frb);
+
+  lu_complex_double(cd_tmp, cd_l, cd_u);
+
+  l_step_complex_double(cd_l, cd_frb, cd_y);
+  u_step_complex_double(cd_u, cd_y, x);
+
+  mat_vec_dot_givens_complex_double(gml2,x,cd_y);
+
+  for(i=0; i<MATRIX_SIZE; i++){
+    x[i] = cd_y[i];
+    xi[i] = x[i];
+    xia[i] = x[i];
+  }
+
+  iteration_complex_double(cd_fra, cd_l, cd_u, cd_frb, xi, gml2);
+  iteration_both_complex_double_another(cd_frg, a, cd_l, cd_u, b, xia, gml2);
+
+  delete_givens_matrix_list(gml1);
+  delete_givens_matrix_list(gml2);
 }
 void solve_with_rdht_iteration_float128(__float128 a[MATRIX_SIZE][MATRIX_SIZE], __float128 b[MATRIX_SIZE], __float128 x[MATRIX_SIZE], __float128 xi[MATRIX_SIZE], __float128 xia[MATRIX_SIZE]){
   int i;

@@ -52,14 +52,15 @@ void generate_matrix_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float1
   for(i=0; i<MATRIX_SIZE; i++)
     for(j=0; j<MATRIX_SIZE; j++)
       mat[i][j] = random_float_128(range);
-  /*
+
+
   for(i=0; i<MATRIX_SIZE; i++)
     for(j=0; j<MATRIX_SIZE; j++)
       if(i == j)
         mat[i][j] = 1.0Q;//random_float_128(range);
       else
         mat[i][j] = 0.0Q;
-  */
+
 }
 void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;

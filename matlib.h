@@ -7,9 +7,11 @@
 
 // print vector, matrix
 void print_vector_double(double f[MATRIX_SIZE]);
+void print_vector_complex_double(std::complex<double> f[MATRIX_SIZE]);
 void print_vector_float128(__float128 f[MATRIX_SIZE]);
 void print_vector_complex128(__complex128 f[MATRIX_SIZE]);
 void print_matrix_double(double f[MATRIX_SIZE][MATRIX_SIZE]);
+void print_matrix_complex_double(std::complex<double> f[MATRIX_SIZE][MATRIX_SIZE]);
 void print_matrix_float128(__float128 f[MATRIX_SIZE][MATRIX_SIZE]);
 void print_matrix_complex128(__complex128 f[MATRIX_SIZE][MATRIX_SIZE]);
 
