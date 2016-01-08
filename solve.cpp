@@ -38,10 +38,12 @@ double d_frb[MATRIX_SIZE];
 std::complex<double> cd_f[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_r[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_rp[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_rp_sub[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_rgivens[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_rgivens_sub[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_fr[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_frg[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_frg_tmp[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_fra[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_l[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_u[MATRIX_SIZE][MATRIX_SIZE];
@@ -84,6 +86,7 @@ std::complex<double> cd_z[MATRIX_SIZE];
 std::complex<double> cd_ax[MATRIX_SIZE];
 
 
+double tmp0[MATRIX_SIZE][MATRIX_SIZE];
 double tmp1[MATRIX_SIZE][MATRIX_SIZE];
 double tmp2[MATRIX_SIZE];
 void solve_with_partial_pivot_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE], double xi[MATRIX_SIZE], double xia[MATRIX_SIZE]){
@@ -321,7 +324,9 @@ void solve_with_rdft_mod_iteration_complex_double(std::complex<double> a[MATRIX_
 
   dft_matrix_complex_double(cd_f);
   r_perm_matrix_complex_double(cd_rp);
-  mat_mul_complex_double(cd_f,cd_rp,cd_fr);
+  r_perm_matrix_complex_double(cd_rp_sub);
+  mat_mul_complex_double(cd_f,cd_rp,cd_frg); // use cd_frg for tmp
+  mat_mul_complex_double(cd_frg,cd_rp_sub,cd_fr);
   mat_mul_complex_double(cd_fr,a,cd_fra);
   mat_vec_dot_complex_double(cd_fr,b,cd_frb);
 
@@ -362,13 +367,15 @@ void solve_with_rdft_mod_iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX
 }
 void solve_with_rdft_givens_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE]){
   int i;
-  givens_matrix_list *gml;
+  givens_matrix_list *gml1, *gml2;
 
   dft_matrix_complex_double(cd_f);
   r_matrix_complex_double(cd_r);
-  gml = r_givens_matrix_double();
+  gml1 = r_givens_matrix_double();
+  gml2 = r_givens_matrix_double();
   mat_mul_complex_double(cd_f,cd_r,cd_fr);
-  mat_mul_givens_right_complex_double(cd_fr,gml,cd_frg);
+  mat_mul_givens_right_complex_double(cd_fr,gml1,cd_frg_tmp);
+  mat_mul_givens_right_complex_double(cd_frg_tmp,gml2,cd_frg);
   mat_mul_complex_double(cd_frg,a,cd_fra);
   mat_vec_dot_complex_double(cd_frg,b,cd_frb);
 

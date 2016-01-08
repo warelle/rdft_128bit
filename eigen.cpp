@@ -2,6 +2,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/SVD>
+#include <Eigen/Dense>
 
 using namespace Eigen;
 using namespace std;
@@ -67,6 +68,33 @@ void down_cast_complex128_to_complex(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], c
 //
 //  return sval[0]/sval[sval.size()-1];
 //}
+
+void solver_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE]){
+  MatrixXd aa(MATRIX_SIZE,MATRIX_SIZE);
+  VectorXd bb(MATRIX_SIZE);
+  for(int i=0; i<MATRIX_SIZE; i++)
+    for(int j=0; j<MATRIX_SIZE; j++)
+      aa(i,j) = a[i][j];
+  for(int i=0; i<MATRIX_SIZE; i++)
+    bb(i) = b[i];
+  VectorXd xx = aa.lu().solve(bb);
+  for(int i=0; i<MATRIX_SIZE; i++)
+    x[i] = xx(i);
+}
+
+void lu_solver_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE]){
+  MatrixXd aa(MATRIX_SIZE,MATRIX_SIZE);
+  VectorXd bb(MATRIX_SIZE);
+  for(int i=0; i<MATRIX_SIZE; i++)
+    for(int j=0; j<MATRIX_SIZE; j++)
+      aa(i,j) = a[i][j];
+  for(int i=0; i<MATRIX_SIZE; i++)
+    bb(i) = b[i];
+  PartialPivLU< MatrixXd > lu(aa);
+  VectorXd xx = lu.solve(bb);
+  for(int i=0; i<MATRIX_SIZE; i++)
+    x[i] = xx(i);
+}
 
 double condition_number(double a[MATRIX_SIZE][MATRIX_SIZE], double *sa){
   MatrixXd mat =  Map<Matrix<double, Dynamic, Dynamic> >(&(a[0][0]), MATRIX_SIZE, MATRIX_SIZE);

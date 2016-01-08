@@ -126,7 +126,7 @@ void swap_double(double m[MATRIX_SIZE][MATRIX_SIZE], int i, int j){
 }
 int pivot_double(double m[MATRIX_SIZE][MATRIX_SIZE], int k){
   int i;
-  int piv = -1;
+  double piv = -1;
   int line = k;
   for(i=k; i<MATRIX_SIZE; i++){
     if(fabs(m[i][k]) > piv){
@@ -160,7 +160,7 @@ void lu_partial_pivot_double(double m[MATRIX_SIZE][MATRIX_SIZE], double l[MATRIX
 
   // [TODO] more efficient code
   for(i=0; i<MATRIX_SIZE; i++){
-    l[i][i] = 1.0Q;
+    l[i][i] = 1.0;
     for(j=0; j<MATRIX_SIZE; j++)
       if(i>j)
         l[i][j] = mat[i][j];

@@ -4,6 +4,7 @@
 #include <time.h>
 #include <math.h>
 
+// return: random value
 double uniform(){
   static int init_flg = 0;
   if(!init_flg){
@@ -36,6 +37,7 @@ __complex128 random_complex_128(__float128 range){
   return r;
 }
 
+// return: vec
 void generate_vector_float128(__float128 vec[MATRIX_SIZE], __float128 range){
   int i;
   for(i=0; i<MATRIX_SIZE; i++)
@@ -47,20 +49,11 @@ void generate_vector_complex128(__complex128 vec[MATRIX_SIZE], __float128 range)
     vec[i] = random_complex_128(range);
 }
 
-void generate_matrix_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
-  int i,j;
-  for(i=0; i<MATRIX_SIZE; i++)
-    for(j=0; j<MATRIX_SIZE; j++)
-      mat[i][j] = random_float_128(range);
-
-
-  for(i=0; i<MATRIX_SIZE; i++)
-    for(j=0; j<MATRIX_SIZE; j++)
-      if(i == j)
-        mat[i][j] = 1.0Q;//random_float_128(range);
-      else
-        mat[i][j] = 0.0Q;
-
+// return: mat
+void generate_matrix_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range, int band_size){
+//  gen_random_float128(mat,range);
+  gen_diag_big_float128(mat,range);
+//  gen_arrowhead_float128(mat,range);
 }
 void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;
@@ -69,8 +62,9 @@ void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __fl
       mat[i][j] = random_complex_128(range);
 }
 
-void generate_linear_system_float_128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 vec[MATRIX_SIZE], __float128 range){
-  generate_matrix_float128(mat, range);
+// return: mat,vec
+void generate_linear_system_float_128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 vec[MATRIX_SIZE], __float128 range, int band_size){
+  generate_matrix_float128(mat, range, band_size);
   generate_vector_float128(vec, range);
 }
 void generate_linear_system_complex_128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __complex128 vec[MATRIX_SIZE], __float128 range){
@@ -79,3 +73,76 @@ void generate_linear_system_complex_128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZ
 }
 
 
+/*--- specific type of matrices ---*/
+void gen_identity_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++)
+    for(j=0; j<MATRIX_SIZE; j++)
+      if(i == j)
+        mat[i][j] = 1.0Q;
+      else
+        mat[i][j] = 0.0Q;
+}
+void gen_random_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++)
+    for(j=0; j<MATRIX_SIZE; j++)
+      mat[i][j] = random_float_128(range);
+}
+void gen_arrowhead_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++)
+    for(j=0; j<MATRIX_SIZE; j++)
+      if(i == j || i==0 || j==0)
+        mat[i][j] = random_float_128(range);
+      else
+        mat[i][j] = 0.0Q;
+}
+void gen_diag_big_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
+  int i,j;
+  __float128 big_f = 100000000.0Q;
+  __float128 small_f = 0.0001Q;
+  for(i=0; i<MATRIX_SIZE; i++)
+    for(j=0; j<MATRIX_SIZE; j++)
+      if(i == j)
+        mat[i][j] = random_float_128(range*big_f);
+      else
+        mat[i][j] = random_float_128(range*small_f);
+}
+// [NOTE] BAND_SIZE will be 2*band_size-1
+void gen_band_no_side_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range, int band_size){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    if(i<band_size){
+      mat[i][0] = random_float_128(range);
+      mat[0][i] = random_float_128(range);
+    }else{
+      mat[i][0] = 0.0Q;
+      mat[0][i] = 0.0Q;
+    }
+  }
+  for(i=1; i<MATRIX_SIZE; i++)
+    for(j=1; j<MATRIX_SIZE; j++)
+      if(mat[i-1][j-1] != 0.0Q)
+        mat[i][j] = mat[i-1][j-1];
+      else
+        mat[i][j] = 0.0Q;
+}
+void gen_band_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range, int band_size){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    if(i<band_size || (MATRIX_SIZE-band_size) < i){
+      mat[i][0] = random_float_128(range);
+      mat[0][i] = random_float_128(range);
+    }else{
+      mat[i][0] = 0.0Q;
+      mat[0][i] = 0.0Q;
+    }
+  }
+  for(i=1; i<MATRIX_SIZE; i++)
+    for(j=1; j<MATRIX_SIZE; j++)
+      if(mat[i-1][j-1] != 0.0Q)
+        mat[i][j] = mat[i-1][j-1];
+      else
+        mat[i][j] = 0.0Q;
+}

@@ -10,6 +10,9 @@ void down_cast_vec_complex_128(__complex128 a[MATRIX_SIZE], __complex128 b[MATRI
 void down_cast_mat_complex_128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128 b[MATRIX_SIZE][MATRIX_SIZE]);
 void down_cast_complex128_to_complex(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE][MATRIX_SIZE]);
 
+void solver_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE]);
+void lu_solver_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE]);
+
 double condition_number_complex_128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], int k, double *sfrak);
 double condition_number(double a[MATRIX_SIZE][MATRIX_SIZE], double *sa);
 

@@ -26,6 +26,7 @@
 #define RDFT_GIVENS_ITERATION      2048
 #define RDFT_BOTH_GIVENS           4096
 #define RDFT_BOTH_GIVENS_ITERATION 8192
+#define LIB                        16384
 
 int general_counter_0 = 0;
 int general_counter_1 = 0;
@@ -126,6 +127,7 @@ double d_x_pp_iter_another[MATRIX_SIZE];
 double d_x_pp_with_round_error[MATRIX_SIZE];
 double d_x_pp_iter_with_round_error[MATRIX_SIZE];
 double d_x_pp_iter_another_with_round_error[MATRIX_SIZE];
+double d_x_lib[MATRIX_SIZE];
 
 double d_x_rdft_dif[MATRIX_SIZE];
 double d_x_rdft_iter_dif[MATRIX_SIZE];
@@ -151,6 +153,7 @@ double d_x_pp_iter_another_dif[MATRIX_SIZE];
 double d_x_pp_with_round_error_dif[MATRIX_SIZE];
 double d_x_pp_iter_with_round_error_dif[MATRIX_SIZE];
 double d_x_pp_iter_with_round_error_another_dif[MATRIX_SIZE];
+double d_x_lib_dif[MATRIX_SIZE];
 
 double d_rdft_err;
 double d_rdft_iter_err;
@@ -176,9 +179,10 @@ double d_pp_iter_another_err;
 double d_pp_with_round_error_err;
 double d_pp_iter_with_round_error_err;
 double d_pp_iter_another_with_round_error_err;
+double d_lib_err;
 
-void run_64bit(int dat, int opt, int exe){
-  generate_linear_system_float_128(a,x,100.0Q);
+void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
+  generate_linear_system_float_128(a,x,100.0Q, band_size);
   cast_mat_float128_to_double(a,d_a);
   cast_vec_float128_to_double(x,d_x);
 
@@ -258,13 +262,19 @@ void run_64bit(int dat, int opt, int exe){
     d_pp_iter_err   = vector_norm_double(d_x_pp_iter_dif);
     d_pp_iter_another_err   = vector_norm_double(d_x_pp_iter_another_dif);
 
-    solve_with_partial_pivot_double(d_a,d_b_with_round_error,d_x_pp_with_round_error, d_x_pp_iter_with_round_error, d_x_pp_iter_another_with_round_error);
-    vec_sub_double(d_x,d_x_pp_with_round_error,d_x_pp_with_round_error_dif);
-    vec_sub_double(d_x,d_x_pp_iter_with_round_error,d_x_pp_iter_with_round_error_dif);
-    vec_sub_double(d_x,d_x_pp_iter_another_with_round_error,d_x_pp_iter_with_round_error_another_dif);
-    d_pp_with_round_error_err  = vector_norm_double(d_x_pp_with_round_error_dif);
-    d_pp_iter_with_round_error_err = vector_norm_double(d_x_pp_iter_with_round_error_dif);
-    d_pp_iter_another_with_round_error_err = vector_norm_double(d_x_pp_iter_with_round_error_another_dif);
+//    solve_with_partial_pivot_double(d_a,d_b_with_round_error,d_x_pp_with_round_error, d_x_pp_iter_with_round_error, d_x_pp_iter_another_with_round_error);
+//    vec_sub_double(d_x,d_x_pp_with_round_error,d_x_pp_with_round_error_dif);
+//    vec_sub_double(d_x,d_x_pp_iter_with_round_error,d_x_pp_iter_with_round_error_dif);
+//    vec_sub_double(d_x,d_x_pp_iter_another_with_round_error,d_x_pp_iter_with_round_error_another_dif);
+//    d_pp_with_round_error_err  = vector_norm_double(d_x_pp_with_round_error_dif);
+//    d_pp_iter_with_round_error_err = vector_norm_double(d_x_pp_iter_with_round_error_dif);
+//    d_pp_iter_another_with_round_error_err = vector_norm_double(d_x_pp_iter_with_round_error_another_dif);
+  }
+  if(exe & LIB){
+    solver_double(d_a, d_b, d_x_lib);
+    // lu_solver_double(d_a, d_b, d_x_lib);
+    vec_sub_double(d_x,d_x_lib,d_x_lib_dif);
+    d_lib_err   = vector_norm_double(d_x_lib_dif);
   }
 
   cast_mat_float128_to_double(a,double_a);
@@ -338,6 +348,7 @@ void run_64bit(int dat, int opt, int exe){
   }else if(opt == 1){ // graph data
     if(condition_number(double_a,NULL) > 15000)
       return;
+    printf("%d ", x_axis);
     printf("%f ", condition_number(double_a,NULL));
     print_double(d_rdft_err);
     printf(" ");
@@ -357,6 +368,12 @@ void run_64bit(int dat, int opt, int exe){
     printf(" ");
     print_double(d_rdft_givens_iter_another_err);
     printf(" ");
+    print_double(d_rdft_both_givens_err);
+    printf(" ");
+    print_double(d_rdft_both_givens_iter_err);
+    printf(" ");
+    print_double(d_rdft_both_givens_iter_another_err);
+    printf(" ");
     print_double(d_gauss_err);
     printf(" ");
     print_double(d_gauss_iter_err);
@@ -374,6 +391,8 @@ void run_64bit(int dat, int opt, int exe){
     print_double(d_pp_iter_with_round_error_err);
     printf(" ");
     print_double(d_pp_iter_another_with_round_error_err);
+    printf(" ");
+    print_double(d_lib_err);
     printf("\n");
   }else if(opt == 2){
     printf("condition number:");
@@ -447,14 +466,14 @@ void run_64bit(int dat, int opt, int exe){
       printf("Partial Pivot  :");
       print_double(d_pp_err);
       printf("\n");
-      printf("Partial Pivot d:");
-      print_double(d_pp_with_round_error_err);
-      printf("\n");
-      if(d_pp_err < d_pp_with_round_error_err){
-        general_counter_0++; // no rounding is good
-      }else{
-        general_counter_1++; // rounding   is good
-      }
+      //printf("Partial Pivot d:");
+      //print_double(d_pp_with_round_error_err);
+      //printf("\n");
+      //if(d_pp_err < d_pp_with_round_error_err){
+      //  general_counter_0++; // no rounding is good
+      //}else{
+      //  general_counter_1++; // rounding   is good
+      //}
     }
     if(exe & PP_ITERATION){
       printf("Partial Pivot  :");
@@ -475,11 +494,16 @@ void run_64bit(int dat, int opt, int exe){
         general_counter_3++; // rounding   is good
       }
     }
+    if(exe & LIB){
+      printf("LIB            :");
+      print_double(d_lib_err);
+      printf("\n");
+    }
   }
 }
 
-void run_128bit(int dat, int opt, int exe){
-  generate_linear_system_float_128(a,x,100.0Q);
+void run_128bit(int dat, int opt, int exe, int band_size){
+  generate_linear_system_float_128(a,x,100.0Q, band_size);
   mat_vec_dot_float128(a,x,b);
 
   // [CARE] this must change the result
@@ -699,11 +723,14 @@ extern __complex128 c_fra[MATRIX_SIZE][MATRIX_SIZE];
 //}
 
 int main(){
-  int i;
-  int exe = RDFT_MOD | RDFT_MOD_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | RDFT_BOTH_GIVENS | RDFT_BOTH_GIVENS_ITERATION;
+  int i,j;
+  int exe = RDFT_MOD | RDFT_MOD_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | RDFT_BOTH_GIVENS | RDFT_BOTH_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | LIB;
   //int exe = RDFT | RDFT_ITERATION | RDFT_MOD | RDFT_MOD_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
-  for(i=0; i<100; i++){
-    run_64bit(i,2,exe);
+  //for(i=0; i<MATRIX_SIZE; i++){
+  for(i=0; i<10; i++){
+    //for(j=0; j<4; j++)
+      run_64bit(i,2,exe, i+1, MATRIX_SIZE);
+    //fprintf(stderr, "%d ", i);
   }
   // for rounding relationship on PP
   if((exe^(PP | PP_ITERATION)) == 0){
