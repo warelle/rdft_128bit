@@ -2,6 +2,7 @@
 
 MATRIX_SIZE=2
 LIMIT_SIZE=512
+INCREMENT=1
 
 function binary_make(){
   make clean
@@ -23,5 +24,5 @@ do
   binary_make
   exec_program
 
-  ((MATRIX_SIZE += 2))
+  ((MATRIX_SIZE += INCREMENT))
 done

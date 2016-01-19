@@ -1,8 +1,8 @@
 #include "solve.h"
 #include "lu.h"
 #include "rdft.h"
+#include "lib.h"
 #include "matlib.h"
-#include "givens.h"
 #include <cstdio>
 
 
@@ -50,6 +50,10 @@ std::complex<double> cd_u[MATRIX_SIZE][MATRIX_SIZE];
 std::complex<double> cd_y[MATRIX_SIZE];
 std::complex<double> cd_frb[MATRIX_SIZE];
 std::complex<double> cd_tmp[MATRIX_SIZE][MATRIX_SIZE];
+
+std::complex<double> cd_r1[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_r2[MATRIX_SIZE][MATRIX_SIZE];
+std::complex<double> cd_r3[MATRIX_SIZE][MATRIX_SIZE];
 
 // partial pivot
 double d_fa[MATRIX_SIZE][MATRIX_SIZE];
@@ -319,16 +323,19 @@ void solve_with_rdft_iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX_SIZ
   iteration_complex128(c_fra, c_l, c_u, c_frb, xi);
   iteration_complex128_another(c_fr, a, c_l, c_u, b, xia);
 }
-void solve_with_rdft_mod_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE]){
+void solve_with_rdft_perm_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE], int *counter){
   int i;
 
   dft_matrix_complex_double(cd_f);
   r_perm_matrix_complex_double(cd_rp);
-  r_perm_matrix_complex_double(cd_rp_sub);
-  mat_mul_complex_double(cd_f,cd_rp,cd_frg); // use cd_frg for tmp
-  mat_mul_complex_double(cd_frg,cd_rp_sub,cd_fr);
+  mat_mul_complex_double(cd_f,cd_rp,cd_fr); // use cd_frg for tmp
   mat_mul_complex_double(cd_fr,a,cd_fra);
   mat_vec_dot_complex_double(cd_fr,b,cd_frb);
+
+  if(counter != NULL){
+    mat_mul_complex_double(cd_rp, a, cd_r1);
+    *counter = count_zero_mat_complex_double(cd_r1);
+  }
 
   lu_complex_double(cd_fra, cd_l, cd_u);
 
@@ -343,7 +350,7 @@ void solve_with_rdft_mod_iteration_complex_double(std::complex<double> a[MATRIX_
   iteration_complex_double(cd_fra, cd_l, cd_u, cd_frb, xi);
   iteration_complex_double_another(cd_fr, a, cd_l, cd_u, b, xia);
 }
-void solve_with_rdft_mod_iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128 b[MATRIX_SIZE], __complex128 x[MATRIX_SIZE], __complex128 xi[MATRIX_SIZE], __complex128 xia[MATRIX_SIZE]){
+void solve_with_rdft_perm_iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128 b[MATRIX_SIZE], __complex128 x[MATRIX_SIZE], __complex128 xi[MATRIX_SIZE], __complex128 xia[MATRIX_SIZE]){
   int i;
 
   dft_matrix_complex_128(c_f);
@@ -365,7 +372,45 @@ void solve_with_rdft_mod_iteration_complex128(__complex128 a[MATRIX_SIZE][MATRIX
   iteration_complex128(c_fra, c_l, c_u, c_frb, xi);
   iteration_complex128_another(c_fr, a, c_l, c_u, b, xia);
 }
-void solve_with_rdft_givens_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE]){
+void solve_with_rdft_givens_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE], int *counter){
+  int i;
+  givens_matrix_list *gml;
+
+  dft_matrix_complex_double(cd_f);
+  r_matrix_complex_double(cd_r);
+  gml = r_givens_matrix_double();
+  mat_mul_complex_double(cd_f,cd_r,cd_fr);
+  mat_mul_givens_right_complex_double(cd_fr,gml,cd_frg);
+  mat_mul_complex_double(cd_frg,a,cd_fra);
+  mat_vec_dot_complex_double(cd_frg,b,cd_frb);
+
+  if(counter != NULL){
+    int j;
+    for(i=0; i<MATRIX_SIZE; i++){
+      for(j=0; j<MATRIX_SIZE; j++)
+        cd_r1[i][j] = std::complex<double>(0.0,0.0);
+      cd_r1[i][i] = std::complex<double>(1.0,0.0);
+    }
+    mat_mul_givens_right_complex_double(cd_r1,gml,cd_r2);
+    mat_mul_complex_double(cd_r2,a,cd_r3);
+
+    *counter = count_zero_mat_complex_double(cd_r3);
+  }
+
+  lu_complex_double(cd_fra, cd_l, cd_u);
+
+  l_step_complex_double(cd_l, cd_frb, cd_y);
+  u_step_complex_double(cd_u, cd_y, x);
+
+  for(i=0; i<MATRIX_SIZE; i++){
+    xi[i] = x[i];
+    xia[i] = x[i];
+  }
+
+  iteration_complex_double(cd_fra, cd_l, cd_u, cd_frb, xi);
+  iteration_complex_double_another(cd_frg, a, cd_l, cd_u, b, xia);
+}
+void solve_with_rdft_givens_two_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE], int *counter){
   int i;
   givens_matrix_list *gml1, *gml2;
 
@@ -378,6 +423,19 @@ void solve_with_rdft_givens_iteration_complex_double(std::complex<double> a[MATR
   mat_mul_givens_right_complex_double(cd_frg_tmp,gml2,cd_frg);
   mat_mul_complex_double(cd_frg,a,cd_fra);
   mat_vec_dot_complex_double(cd_frg,b,cd_frb);
+
+  if(counter != NULL){
+    int j;
+    for(i=0; i<MATRIX_SIZE; i++){
+      for(j=0; j<MATRIX_SIZE; j++)
+        cd_r1[i][j] = std::complex<double>(0.0,0.0);
+      cd_r1[i][i] = std::complex<double>(1.0,0.0);
+    }
+    mat_mul_givens_right_complex_double(cd_r1,gml1,cd_r2);
+    mat_mul_givens_right_complex_double(cd_r2,gml2,cd_r3);
+    mat_mul_complex_double(cd_r3,a,cd_r1);
+    *counter = count_zero_mat_complex_double(cd_r1);
+  }
 
   lu_complex_double(cd_fra, cd_l, cd_u);
 
@@ -419,7 +477,7 @@ void iteration_both_complex_double_another(std::complex<double> f[MATRIX_SIZE][M
     vec_add_complex_double(x,cd_v,x);
   }
 }
-void solve_with_rdft_both_givens_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE]){
+void solve_with_rdft_both_givens_iteration_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE], std::complex<double> b[MATRIX_SIZE], std::complex<double> x[MATRIX_SIZE], std::complex<double> xi[MATRIX_SIZE], std::complex<double> xia[MATRIX_SIZE], int *counter){
   int i;
   givens_matrix_list *gml1, *gml2;
 
@@ -432,6 +490,20 @@ void solve_with_rdft_both_givens_iteration_complex_double(std::complex<double> a
   mat_mul_complex_double(cd_frg,a,cd_fra);
   mat_mul_givens_right_complex_double(cd_fra, gml2, cd_tmp);
   mat_vec_dot_complex_double(cd_frg,b,cd_frb);
+
+  if(counter != NULL){
+    int j;
+    for(i=0; i<MATRIX_SIZE; i++){
+      for(j=0; j<MATRIX_SIZE; j++)
+        cd_r1[i][j] = std::complex<double>(0.0,0.0);
+      cd_r1[i][i] = std::complex<double>(1.0,0.0);
+    }
+    mat_mul_givens_right_complex_double(cd_r1,gml1,cd_r2);
+    mat_mul_complex_double(cd_r2,a,cd_r3);
+    mat_mul_givens_right_complex_double(cd_r3,gml2,cd_r1);
+
+    *counter = count_zero_mat_complex_double(cd_r1);
+  }
 
   lu_complex_double(cd_tmp, cd_l, cd_u);
 
@@ -475,12 +547,16 @@ void solve_with_rdht_iteration_float128(__float128 a[MATRIX_SIZE][MATRIX_SIZE], 
   iteration_float128_another(f_fr, a, f_l, f_u, b, xia);
 }
 
-void solve_with_gauss_iteration_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE], double xi[MATRIX_SIZE], double xia[MATRIX_SIZE]){
+void solve_with_gauss_iteration_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE], double xi[MATRIX_SIZE], double xia[MATRIX_SIZE], int *counter){
   int i;
 
   gauss_matrix_double(d_f);
   mat_mul_double(d_f,a,d_fa);
   mat_vec_dot_double(d_f,b,d_fb);
+
+  if(counter != NULL){
+    *counter = count_zero_mat_double(d_fa);
+  }
 
   lu_double(d_fa, d_l, d_u);
 

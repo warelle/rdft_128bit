@@ -125,7 +125,32 @@ void cast_mat_complex128_to_float128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], _
 }
 
 
+// ----- count zero ----- //
+int count_zero_mat_double(double a[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j,r;
+  r=0;
+  for(i=0; i<MATRIX_SIZE; i++)
+    for(j=0; j<MATRIX_SIZE; j++)
+      if(-1.0e-30 <= a[i][j] && a[i][j] <= 1.0e-30)
+        r++;
+  return r;
+}
+int count_zero_mat_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j,r;
+  r=0;
+  for(i=0; i<MATRIX_SIZE; i++)
+    for(j=0; j<MATRIX_SIZE; j++)
+      if(-1.0e-30 <= std::norm(a[i][j]) && std::norm(a[i][j]) <= 1.0e-30)
+        r++;
+  return r;
+}
+
+
+
 // ----- print ----- //
+void print_int(int d){
+  printf("%d",d);
+}
 void print_double(double d){
   printf("%.25f",d);
 }

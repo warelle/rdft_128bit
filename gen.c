@@ -54,6 +54,9 @@ void generate_matrix_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float1
 //  gen_random_float128(mat,range);
   gen_diag_big_float128(mat,range);
 //  gen_arrowhead_float128(mat,range);
+//  gen_identity_float128(mat);
+//  gen_band_no_side_float128(mat, range, band_size);
+//  gen_band_float128(mat, range, band_size);
 }
 void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;
@@ -100,8 +103,8 @@ void gen_arrowhead_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128
 }
 void gen_diag_big_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;
-  __float128 big_f = 100000000.0Q;
-  __float128 small_f = 0.0001Q;
+  __float128 big_f = 1000000000000000000.0Q;
+  __float128 small_f = 1.0Q;
   for(i=0; i<MATRIX_SIZE; i++)
     for(j=0; j<MATRIX_SIZE; j++)
       if(i == j)
@@ -124,7 +127,7 @@ void gen_band_no_side_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float
   for(i=1; i<MATRIX_SIZE; i++)
     for(j=1; j<MATRIX_SIZE; j++)
       if(mat[i-1][j-1] != 0.0Q)
-        mat[i][j] = mat[i-1][j-1];
+        mat[i][j] = random_float_128(range);
       else
         mat[i][j] = 0.0Q;
 }
@@ -142,7 +145,7 @@ void gen_band_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 rang
   for(i=1; i<MATRIX_SIZE; i++)
     for(j=1; j<MATRIX_SIZE; j++)
       if(mat[i-1][j-1] != 0.0Q)
-        mat[i][j] = mat[i-1][j-1];
+        mat[i][j] = random_float_128(range);
       else
         mat[i][j] = 0.0Q;
 }

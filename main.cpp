@@ -20,13 +20,16 @@
 #define GAUSS_ITERATION            32
 #define PP                         64
 #define PP_ITERATION               128
-#define RDFT_MOD                   256
-#define RDFT_MOD_ITERATION         512
+#define RDFT_PERM                  256
+#define RDFT_PERM_ITERATION        512
 #define RDFT_GIVENS                1024
 #define RDFT_GIVENS_ITERATION      2048
-#define RDFT_BOTH_GIVENS           4096
-#define RDFT_BOTH_GIVENS_ITERATION 8192
-#define LIB                        16384
+#define RDFT_GIVENS_TWO            4096
+#define RDFT_GIVENS_TWO_ITERATION  8192
+#define RDFT_BOTH_GIVENS           16384
+#define RDFT_BOTH_GIVENS_ITERATION 32768
+#define LIB                        65536
+#define ALL                       131071
 
 int general_counter_0 = 0;
 int general_counter_1 = 0;
@@ -39,9 +42,9 @@ __float128 x[MATRIX_SIZE];
 __float128 x_rdft[MATRIX_SIZE];
 __float128 x_rdft_iter[MATRIX_SIZE];
 __float128 x_rdft_iter_another[MATRIX_SIZE];
-__float128 x_rdft_mod[MATRIX_SIZE];
-__float128 x_rdft_mod_iter[MATRIX_SIZE];
-__float128 x_rdft_mod_iter_another[MATRIX_SIZE];
+__float128 x_rdft_perm[MATRIX_SIZE];
+__float128 x_rdft_perm_iter[MATRIX_SIZE];
+__float128 x_rdft_perm_iter_another[MATRIX_SIZE];
 __float128 x_rdht[MATRIX_SIZE];
 __float128 x_rdht_iter[MATRIX_SIZE];
 __float128 x_rdht_iter_another[MATRIX_SIZE];
@@ -61,9 +64,9 @@ __complex128 xa[MATRIX_SIZE];
 __float128 x_rdft_dif[MATRIX_SIZE];
 __float128 x_rdft_iter_dif[MATRIX_SIZE];
 __float128 x_rdft_iter_another_dif[MATRIX_SIZE];
-__float128 x_rdft_mod_dif[MATRIX_SIZE];
-__float128 x_rdft_mod_iter_dif[MATRIX_SIZE];
-__float128 x_rdft_mod_iter_another_dif[MATRIX_SIZE];
+__float128 x_rdft_perm_dif[MATRIX_SIZE];
+__float128 x_rdft_perm_iter_dif[MATRIX_SIZE];
+__float128 x_rdft_perm_iter_another_dif[MATRIX_SIZE];
 __float128 x_rdht_dif[MATRIX_SIZE];
 __float128 x_rdht_iter_dif[MATRIX_SIZE];
 __float128 x_rdht_iter_another_dif[MATRIX_SIZE];
@@ -77,9 +80,9 @@ __float128 x_pp_iter_another_dif[MATRIX_SIZE];
 __float128 rdft_err;
 __float128 rdft_iter_err;
 __float128 rdft_iter_another_err;
-__float128 rdft_mod_err;
-__float128 rdft_mod_iter_err;
-__float128 rdft_mod_iter_another_err;
+__float128 rdft_perm_err;
+__float128 rdft_perm_iter_err;
+__float128 rdft_perm_iter_another_err;
 __float128 rdht_err;
 __float128 rdht_iter_err;
 __float128 rdht_iter_another_err;
@@ -106,12 +109,15 @@ double d_x[MATRIX_SIZE];
 double d_x_rdft[MATRIX_SIZE];
 double d_x_rdft_iter[MATRIX_SIZE];
 double d_x_rdft_iter_another[MATRIX_SIZE];
-double d_x_rdft_mod[MATRIX_SIZE];
-double d_x_rdft_mod_iter[MATRIX_SIZE];
-double d_x_rdft_mod_iter_another[MATRIX_SIZE];
+double d_x_rdft_perm[MATRIX_SIZE];
+double d_x_rdft_perm_iter[MATRIX_SIZE];
+double d_x_rdft_perm_iter_another[MATRIX_SIZE];
 double d_x_rdft_givens[MATRIX_SIZE];
 double d_x_rdft_givens_iter[MATRIX_SIZE];
 double d_x_rdft_givens_iter_another[MATRIX_SIZE];
+double d_x_rdft_givens_two[MATRIX_SIZE];
+double d_x_rdft_givens_two_iter[MATRIX_SIZE];
+double d_x_rdft_givens_two_iter_another[MATRIX_SIZE];
 double d_x_rdft_both_givens[MATRIX_SIZE];
 double d_x_rdft_both_givens_iter[MATRIX_SIZE];
 double d_x_rdft_both_givens_iter_another[MATRIX_SIZE];
@@ -132,12 +138,15 @@ double d_x_lib[MATRIX_SIZE];
 double d_x_rdft_dif[MATRIX_SIZE];
 double d_x_rdft_iter_dif[MATRIX_SIZE];
 double d_x_rdft_iter_another_dif[MATRIX_SIZE];
-double d_x_rdft_mod_dif[MATRIX_SIZE];
-double d_x_rdft_mod_iter_dif[MATRIX_SIZE];
-double d_x_rdft_mod_iter_another_dif[MATRIX_SIZE];
+double d_x_rdft_perm_dif[MATRIX_SIZE];
+double d_x_rdft_perm_iter_dif[MATRIX_SIZE];
+double d_x_rdft_perm_iter_another_dif[MATRIX_SIZE];
 double d_x_rdft_givens_dif[MATRIX_SIZE];
 double d_x_rdft_givens_iter_dif[MATRIX_SIZE];
 double d_x_rdft_givens_iter_another_dif[MATRIX_SIZE];
+double d_x_rdft_givens_two_dif[MATRIX_SIZE];
+double d_x_rdft_givens_two_iter_dif[MATRIX_SIZE];
+double d_x_rdft_givens_two_iter_another_dif[MATRIX_SIZE];
 double d_x_rdft_both_givens_dif[MATRIX_SIZE];
 double d_x_rdft_both_givens_iter_dif[MATRIX_SIZE];
 double d_x_rdft_both_givens_iter_another_dif[MATRIX_SIZE];
@@ -158,12 +167,15 @@ double d_x_lib_dif[MATRIX_SIZE];
 double d_rdft_err;
 double d_rdft_iter_err;
 double d_rdft_iter_another_err;
-double d_rdft_mod_err;
-double d_rdft_mod_iter_err;
-double d_rdft_mod_iter_another_err;
+double d_rdft_perm_err;
+double d_rdft_perm_iter_err;
+double d_rdft_perm_iter_another_err;
 double d_rdft_givens_err;
 double d_rdft_givens_iter_err;
 double d_rdft_givens_iter_another_err;
+double d_rdft_givens_two_err;
+double d_rdft_givens_two_iter_err;
+double d_rdft_givens_two_iter_another_err;
 double d_rdft_both_givens_err;
 double d_rdft_both_givens_iter_err;
 double d_rdft_both_givens_iter_another_err;
@@ -208,17 +220,17 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     d_rdft_iter_err = vector_norm_double(d_x_rdft_iter_dif);
     d_rdft_iter_another_err = vector_norm_double(d_x_rdft_iter_another_dif);
   }
-  if(exe & (RDFT_MOD | RDFT_MOD_ITERATION)){
-    solve_with_rdft_mod_iteration_complex_double(dc_aa, dc_bb, dc_xx, dc_xi, dc_xa);
-    cast_vec_complex_double_to_double(dc_xx, d_x_rdft_mod);
-    cast_vec_complex_double_to_double(dc_xi, d_x_rdft_mod_iter);
-    cast_vec_complex_double_to_double(dc_xa, d_x_rdft_mod_iter_another);
-    vec_sub_double(d_x,d_x_rdft_mod,d_x_rdft_mod_dif);
-    vec_sub_double(d_x,d_x_rdft_mod_iter,d_x_rdft_mod_iter_dif);
-    vec_sub_double(d_x,d_x_rdft_mod_iter_another,d_x_rdft_mod_iter_another_dif);
-    d_rdft_mod_err = vector_norm_double(d_x_rdft_mod_dif);
-    d_rdft_mod_iter_err = vector_norm_double(d_x_rdft_mod_iter_dif);
-    d_rdft_mod_iter_another_err = vector_norm_double(d_x_rdft_mod_iter_another_dif);
+  if(exe & (RDFT_PERM | RDFT_PERM_ITERATION)){
+    solve_with_rdft_perm_iteration_complex_double(dc_aa, dc_bb, dc_xx, dc_xi, dc_xa);
+    cast_vec_complex_double_to_double(dc_xx, d_x_rdft_perm);
+    cast_vec_complex_double_to_double(dc_xi, d_x_rdft_perm_iter);
+    cast_vec_complex_double_to_double(dc_xa, d_x_rdft_perm_iter_another);
+    vec_sub_double(d_x,d_x_rdft_perm,d_x_rdft_perm_dif);
+    vec_sub_double(d_x,d_x_rdft_perm_iter,d_x_rdft_perm_iter_dif);
+    vec_sub_double(d_x,d_x_rdft_perm_iter_another,d_x_rdft_perm_iter_another_dif);
+    d_rdft_perm_err = vector_norm_double(d_x_rdft_perm_dif);
+    d_rdft_perm_iter_err = vector_norm_double(d_x_rdft_perm_iter_dif);
+    d_rdft_perm_iter_another_err = vector_norm_double(d_x_rdft_perm_iter_another_dif);
   }
   if(exe & (RDFT_GIVENS | RDFT_GIVENS_ITERATION)){
     solve_with_rdft_givens_iteration_complex_double(dc_aa, dc_bb, dc_xx, dc_xi, dc_xa);
@@ -231,6 +243,18 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     d_rdft_givens_err = vector_norm_double(d_x_rdft_givens_dif);
     d_rdft_givens_iter_err = vector_norm_double(d_x_rdft_givens_iter_dif);
     d_rdft_givens_iter_another_err = vector_norm_double(d_x_rdft_givens_iter_another_dif);
+  }
+  if(exe & (RDFT_GIVENS_TWO | RDFT_GIVENS_TWO_ITERATION)){
+    solve_with_rdft_givens_two_iteration_complex_double(dc_aa, dc_bb, dc_xx, dc_xi, dc_xa);
+    cast_vec_complex_double_to_double(dc_xx, d_x_rdft_givens_two);
+    cast_vec_complex_double_to_double(dc_xi, d_x_rdft_givens_two_iter);
+    cast_vec_complex_double_to_double(dc_xa, d_x_rdft_givens_two_iter_another);
+    vec_sub_double(d_x,d_x_rdft_givens_two,d_x_rdft_givens_two_dif);
+    vec_sub_double(d_x,d_x_rdft_givens_two_iter,d_x_rdft_givens_two_iter_dif);
+    vec_sub_double(d_x,d_x_rdft_givens_two_iter_another,d_x_rdft_givens_two_iter_another_dif);
+    d_rdft_givens_two_err = vector_norm_double(d_x_rdft_givens_two_dif);
+    d_rdft_givens_two_iter_err = vector_norm_double(d_x_rdft_givens_two_iter_dif);
+    d_rdft_givens_two_iter_another_err = vector_norm_double(d_x_rdft_givens_two_iter_another_dif);
   }
   if(exe & (RDFT_BOTH_GIVENS | RDFT_BOTH_GIVENS_ITERATION)){
     solve_with_rdft_both_givens_iteration_complex_double(dc_aa, dc_bb, dc_xx, dc_xi, dc_xa);
@@ -292,13 +316,13 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     print_double(d_rdft_iter_another_err);
     printf("\n");
     printf("RDFTM          :");
-    print_double(d_rdft_mod_err);
+    print_double(d_rdft_perm_err);
     printf("\n");
     printf("RDFTM iteration:");
-    print_double(d_rdft_mod_iter_err);
+    print_double(d_rdft_perm_iter_err);
     printf("\n");
     printf("RDFTM iteration:");
-    print_double(d_rdft_mod_iter_another_err);
+    print_double(d_rdft_perm_iter_another_err);
     printf("\n");
     printf("RDFTG          :");
     print_double(d_rdft_givens_err);
@@ -308,6 +332,15 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     printf("\n");
     printf("RDFTG iteration:");
     print_double(d_rdft_givens_iter_another_err);
+    printf("\n");
+    printf("RDFTG          :");
+    print_double(d_rdft_givens_two_err);
+    printf("\n");
+    printf("RDFTG iteration:");
+    print_double(d_rdft_givens_two_iter_err);
+    printf("\n");
+    printf("RDFTG iteration:");
+    print_double(d_rdft_givens_two_iter_another_err);
     printf("\n");
     printf("RDFTBG         :");
     print_double(d_rdft_both_givens_err);
@@ -346,9 +379,11 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     print_double(d_pp_iter_another_with_round_error_err);
     printf("\n");
   }else if(opt == 1){ // graph data
-    if(condition_number(double_a,NULL) > 15000)
-      return;
+    //if(condition_number(double_a,NULL) > 15000)
+    //  return;
     printf("%d ", x_axis);
+    printf("%d ", band_size);
+    printf("%d ", 2*band_size-1);
     printf("%f ", condition_number(double_a,NULL));
     print_double(d_rdft_err);
     printf(" ");
@@ -356,17 +391,23 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     printf(" ");
     print_double(d_rdft_iter_another_err);
     printf(" ");
-    print_double(d_rdft_mod_err);
+    print_double(d_rdft_perm_err);
     printf(" ");
-    print_double(d_rdft_mod_iter_err);
+    print_double(d_rdft_perm_iter_err);
     printf(" ");
-    print_double(d_rdft_mod_iter_another_err);
+    print_double(d_rdft_perm_iter_another_err);
     printf(" ");
     print_double(d_rdft_givens_err);
     printf(" ");
     print_double(d_rdft_givens_iter_err);
     printf(" ");
     print_double(d_rdft_givens_iter_another_err);
+    printf(" ");
+    print_double(d_rdft_givens_two_err);
+    printf(" ");
+    print_double(d_rdft_givens_two_iter_err);
+    printf(" ");
+    print_double(d_rdft_givens_two_iter_another_err);
     printf(" ");
     print_double(d_rdft_both_givens_err);
     printf(" ");
@@ -385,12 +426,12 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     print_double(d_pp_iter_err);
     printf(" ");
     print_double(d_pp_iter_another_err);
-    printf(" ");
-    print_double(d_pp_with_round_error_err);
-    printf(" ");
-    print_double(d_pp_iter_with_round_error_err);
-    printf(" ");
-    print_double(d_pp_iter_another_with_round_error_err);
+    //printf(" ");
+    //print_double(d_pp_with_round_error_err);
+    //printf(" ");
+    //print_double(d_pp_iter_with_round_error_err);
+    //printf(" ");
+    //print_double(d_pp_iter_another_with_round_error_err);
     printf(" ");
     print_double(d_lib_err);
     printf("\n");
@@ -398,75 +439,88 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     printf("condition number:");
     printf("%f\n", condition_number(double_a,NULL));
     if(exe & RDFT){
-      printf("RDFT           :");
+      printf("RDFT               :");
       print_double(d_rdft_err);
       printf("\n");
     }
     if(exe & RDFT_ITERATION){
-      printf("RDFT iteration :");
+      printf("RDFT iteration     :");
       print_double(d_rdft_iter_err);
       printf("\n");
-      printf("RDFT iteration :");
+      printf("RDFT iteration     :");
       print_double(d_rdft_iter_another_err);
       printf("\n");
     }
-    if(exe & RDFT_MOD){
-      printf("RDFTM          :");
-      print_double(d_rdft_mod_err);
+    if(exe & RDFT_PERM){
+      printf("RDFT PERM          :");
+      print_double(d_rdft_perm_err);
       printf("\n");
     }
-    if(exe & RDFT_MOD_ITERATION){
-      printf("RDFTM iteration:");
-      print_double(d_rdft_mod_iter_err);
+    if(exe & RDFT_PERM_ITERATION){
+      printf("RDFT PERM iteration:");
+      print_double(d_rdft_perm_iter_err);
       printf("\n");
-      printf("RDFTM iteration:");
-      print_double(d_rdft_mod_iter_another_err);
+      printf("RDFT PERM iteration:");
+      print_double(d_rdft_perm_iter_another_err);
       printf("\n");
     }
     if(exe & RDFT_GIVENS){
-      printf("RDFTG          :");
+      printf("RDFT GVN           :");
       print_double(d_rdft_givens_err);
       printf("\n");
     }
     if(exe & RDFT_GIVENS_ITERATION){
-      printf("RDFTG iteration:");
+      printf("RDFT GVN iteration :");
       print_double(d_rdft_givens_iter_err);
       printf("\n");
-      printf("RDFTG iteration:");
+      printf("RDFT GVN iteration :");
       print_double(d_rdft_givens_iter_another_err);
       printf("\n");
     }
+    if(exe & RDFT_GIVENS_TWO){
+      printf("RDFT GTWO          :");
+      print_double(d_rdft_givens_two_err);
+      printf("\n");
+    }
+    if(exe & RDFT_GIVENS_TWO_ITERATION){
+      printf("RDFT GTWO iteration:");
+      print_double(d_rdft_givens_two_iter_err);
+      printf("\n");
+      printf("RDFT GTWO iteration:");
+      print_double(d_rdft_givens_two_iter_another_err);
+      printf("\n");
+    }
     if(exe & RDFT_BOTH_GIVENS){
-      printf("RDFTG          :");
+      printf("RDFT BOTH          :");
       print_double(d_rdft_both_givens_err);
       printf("\n");
     }
     if(exe & RDFT_BOTH_GIVENS_ITERATION){
-      printf("RDFTG iteration:");
+      printf("RDFT BOTH iteration:");
       print_double(d_rdft_both_givens_iter_err);
       printf("\n");
-      printf("RDFTG iteration:");
+      printf("RDFT BOTH iteration:");
       print_double(d_rdft_both_givens_iter_another_err);
       printf("\n");
     }
     if(exe & GAUSS){
-      printf("GAUSS          :");
+      printf("GAUSS              :");
       print_double(d_gauss_err);
       printf("\n");
     }
     if(exe & GAUSS_ITERATION){
-      printf("GAUSS iteration:");
+      printf("GAUSS iteration    :");
       print_double(d_gauss_iter_err);
       printf("\n");
-      printf("GAUSS iteration:");
+      printf("GAUSS iteration    :");
       print_double(d_gauss_iter_another_err);
       printf("\n");
     }
     if(exe & PP){
-      printf("Partial Pivot  :");
+      printf("Partial Pivot      :");
       print_double(d_pp_err);
       printf("\n");
-      //printf("Partial Pivot d:");
+      //printf("Partial Pivot d  :");
       //print_double(d_pp_with_round_error_err);
       //printf("\n");
       //if(d_pp_err < d_pp_with_round_error_err){
@@ -476,26 +530,26 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
       //}
     }
     if(exe & PP_ITERATION){
-      printf("Partial Pivot  :");
+      printf("Partial Pivot      :");
       print_double(d_pp_iter_err);
       printf("\n");
-      printf("Partial Pivot  :");
+      printf("Partial Pivot      :");
       print_double(d_pp_iter_another_err);
       printf("\n");
-      printf("Partial Pivot d:");
-      print_double(d_pp_iter_with_round_error_err);
-      printf("\n");
-      printf("Partial Pivot d:");
-      print_double(d_pp_iter_another_with_round_error_err);
-      printf("\n");
-      if(d_pp_iter_err < d_pp_iter_with_round_error_err){
-        general_counter_2++; // no rounding is good
-      }else{
-        general_counter_3++; // rounding   is good
-      }
+      //printf("Partial Pivot d    :");
+      //print_double(d_pp_iter_with_round_error_err);
+      //printf("\n");
+      //printf("Partial Pivot d    :");
+      //print_double(d_pp_iter_another_with_round_error_err);
+      //printf("\n");
+      //if(d_pp_iter_err < d_pp_iter_with_round_error_err){
+      //  general_counter_2++; // no rounding is good
+      //}else{
+      //  general_counter_3++; // rounding   is good
+      //}
     }
     if(exe & LIB){
-      printf("LIB            :");
+      printf("LIB                :");
       print_double(d_lib_err);
       printf("\n");
     }
@@ -566,13 +620,13 @@ void run_128bit(int dat, int opt, int exe, int band_size){
     printf("RDFT iteration :");
     print_float128(rdft_iter_another_err);
     printf("\n");
-    print_float128(rdft_mod_err);
+    print_float128(rdft_perm_err);
     printf("\n");
     printf("RDFT iteration :");
-    print_float128(rdft_mod_iter_err);
+    print_float128(rdft_perm_iter_err);
     printf("\n");
     printf("RDFT iteration :");
-    print_float128(rdft_mod_iter_another_err);
+    print_float128(rdft_perm_iter_another_err);
     printf("\n");
     printf("RDHT           :");
     print_float128(rdht_err);
@@ -724,13 +778,15 @@ extern __complex128 c_fra[MATRIX_SIZE][MATRIX_SIZE];
 
 int main(){
   int i,j;
-  int exe = RDFT_MOD | RDFT_MOD_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | RDFT_BOTH_GIVENS | RDFT_BOTH_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | LIB;
-  //int exe = RDFT | RDFT_ITERATION | RDFT_MOD | RDFT_MOD_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
-  //for(i=0; i<MATRIX_SIZE; i++){
-  for(i=0; i<10; i++){
+  // int exe = RDFT_PERM | RDFT_PERM_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | RDFT_GIVENS_TWO | RDFT_GIVENS_TWO_ITERATION | RDFT_BOTH_GIVENS | RDFT_BOTH_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION;
+  //int exe = RDFT | RDFT_ITERATION | RDFT_PERM | RDFT_PERM_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
+  int exe = ALL;
+  //for(i=0; i<MATRIX_SIZE/2; i++){
+  for(i=0; i<1000; i++){
     //for(j=0; j<4; j++)
-      run_64bit(i,2,exe, i+1, MATRIX_SIZE);
-    //fprintf(stderr, "%d ", i);
+      run_64bit(i,1,exe, i+1, MATRIX_SIZE);
+    fprintf(stderr, "%d ", i);
+    //fprintf(stderr, "%d ", MATRIX_SIZE);
   }
   // for rounding relationship on PP
   if((exe^(PP | PP_ITERATION)) == 0){

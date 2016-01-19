@@ -37,7 +37,12 @@ void cast_vec_complex128_to_float128(__complex128 a[MATRIX_SIZE], __float128 b[M
 void cast_mat_float128_to_complex128(__float128 a[MATRIX_SIZE][MATRIX_SIZE], __complex128 b[MATRIX_SIZE][MATRIX_SIZE]);
 void cast_mat_complex128_to_float128(__complex128 a[MATRIX_SIZE][MATRIX_SIZE], __float128 b[MATRIX_SIZE][MATRIX_SIZE]);
 
+// count zero
+int count_zero_mat_double(double a[MATRIX_SIZE][MATRIX_SIZE]);
+int count_zero_mat_complex_double(std::complex<double> a[MATRIX_SIZE][MATRIX_SIZE]);
+
 // print
+void print_int(int d);
 void print_double(double d);
 void print_float128(__float128 f);
 void print_complex128(__complex128 d);

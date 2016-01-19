@@ -1,7 +1,8 @@
 # Makefile
 
 PROGRAM = main
-OBJ     = main.o lu.o lib.o gen.o rdft.o matlib.o givens.o solve.o
+SUB_OBJ = lu.o lib.o gen.o rdft.o matlib.o givens.o solve.o
+OBJ     = main.o $(SUB_OBJ)
 TESTER  = test.h
 CC      = g++
 CFLAGS  = -Wall -O2 -std=gnu++11
@@ -26,6 +27,9 @@ $(LIBOBJ): eigen.cpp eigen.h $(TESTER)
 .cpp.o: $(TESTER)
 	$(CC) $(CFLAGS) -c $<
 
+zero: test.cxx $(SUB_OBJ) $(LIBOBJ)
+	$(CC) $(CFLAGS) -o test test.cxx $(SUB_OBJ) $(LIBOBJ) $(LIB)
+
 .PHONY: clean
 clean:
-	rm $(PROGRAM) $(OBJ)
+	rm $(PROGRAM) $(OBJ) $(LIBOBJ)

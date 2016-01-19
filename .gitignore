@@ -1,3 +1,5 @@
 main
 *.o
-*.dat
+*.png
+*~
+eigen/
