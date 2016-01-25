@@ -208,6 +208,7 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
   cast_mat_double_to_complex_double(d_a,dc_aa);
   cast_vec_double_to_complex_double(d_b,dc_bb);
 
+
   if(exe & (RDFT | RDFT_ITERATION)){
     solve_with_rdft_iteration_complex_double(dc_aa, dc_bb, dc_xx, dc_xi, dc_xa);
     cast_vec_complex_double_to_double(dc_xx, d_x_rdft);
@@ -780,9 +781,9 @@ int main(){
   int i,j;
   // int exe = RDFT_PERM | RDFT_PERM_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | RDFT_GIVENS_TWO | RDFT_GIVENS_TWO_ITERATION | RDFT_BOTH_GIVENS | RDFT_BOTH_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION;
   //int exe = RDFT | RDFT_ITERATION | RDFT_PERM | RDFT_PERM_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
-  int exe = ALL;
+  int exe = (ALL)^(LIB);
   //for(i=0; i<MATRIX_SIZE/2; i++){
-  for(i=0; i<1000; i++){
+  for(i=0; i<100; i++){
     //for(j=0; j<4; j++)
       run_64bit(i,1,exe, i+1, MATRIX_SIZE);
     fprintf(stderr, "%d ", i);

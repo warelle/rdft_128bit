@@ -139,21 +139,21 @@ int pivot_double(double m[MATRIX_SIZE][MATRIX_SIZE], int k){
   }
   return line;
 }
+double mat_d[MATRIX_SIZE][MATRIX_SIZE];
 void lu_partial_pivot_double(double m[MATRIX_SIZE][MATRIX_SIZE], double l[MATRIX_SIZE][MATRIX_SIZE], double u[MATRIX_SIZE][MATRIX_SIZE], int p[MATRIX_SIZE]){
   int i,j,k;
-  double mat[MATRIX_SIZE][MATRIX_SIZE];
 
   // [TODO] more efficient code
   for(i=0; i<MATRIX_SIZE; i++)
     for(j=0; j<MATRIX_SIZE; j++)
-      mat[i][j] = m[i][j];
+      mat_d[i][j] = m[i][j];
 
   for(i=0; i<MATRIX_SIZE-1; i++){
-    p[i] = pivot_double(mat, i);
+    p[i] = pivot_double(mat_d, i);
     for(j=i+1; j<MATRIX_SIZE; j++){
-      mat[j][i] /= mat[i][i];
+      mat_d[j][i] /= mat_d[i][i];
       for(k=i+1; k<MATRIX_SIZE; k++){
-        mat[j][k] -= mat[j][i]*mat[i][k];
+        mat_d[j][k] -= mat_d[j][i]*mat_d[i][k];
       }
     }
   }
@@ -163,9 +163,9 @@ void lu_partial_pivot_double(double m[MATRIX_SIZE][MATRIX_SIZE], double l[MATRIX
     l[i][i] = 1.0;
     for(j=0; j<MATRIX_SIZE; j++)
       if(i>j)
-        l[i][j] = mat[i][j];
+        l[i][j] = mat_d[i][j];
       else
-        u[i][j] = mat[i][j];
+        u[i][j] = mat_d[i][j];
   }
 }
 
