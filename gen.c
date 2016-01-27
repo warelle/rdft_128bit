@@ -52,11 +52,11 @@ void generate_vector_complex128(__complex128 vec[MATRIX_SIZE], __float128 range)
 // return: mat
 void generate_matrix_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range, int band_size){
 //  gen_random_float128(mat,range);
-  gen_diag_big_float128(mat,range);
+//  gen_diag_big_float128(mat,range);
 //  gen_arrowhead_float128(mat,range);
 //  gen_identity_float128(mat);
 //  gen_band_no_side_float128(mat, range, band_size);
-//  gen_band_float128(mat, range, band_size);
+  gen_band_float128(mat, range, band_size);
 }
 void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;

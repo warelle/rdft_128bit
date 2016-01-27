@@ -39,59 +39,59 @@ int general_counter_3 = 0;
 __float128 a[MATRIX_SIZE][MATRIX_SIZE];
 __float128 b[MATRIX_SIZE];
 __float128 x[MATRIX_SIZE];
-__float128 x_rdft[MATRIX_SIZE];
-__float128 x_rdft_iter[MATRIX_SIZE];
-__float128 x_rdft_iter_another[MATRIX_SIZE];
-__float128 x_rdft_perm[MATRIX_SIZE];
-__float128 x_rdft_perm_iter[MATRIX_SIZE];
-__float128 x_rdft_perm_iter_another[MATRIX_SIZE];
-__float128 x_rdht[MATRIX_SIZE];
-__float128 x_rdht_iter[MATRIX_SIZE];
-__float128 x_rdht_iter_another[MATRIX_SIZE];
-__float128 x_gauss[MATRIX_SIZE];
-__float128 x_gauss_iter[MATRIX_SIZE];
-__float128 x_gauss_iter_another[MATRIX_SIZE];
-__float128 x_pp[MATRIX_SIZE];
-__float128 x_pp_iter[MATRIX_SIZE];
-__float128 x_pp_iter_another[MATRIX_SIZE];
+//__float128 x_rdft[MATRIX_SIZE];
+//__float128 x_rdft_iter[MATRIX_SIZE];
+//__float128 x_rdft_iter_another[MATRIX_SIZE];
+//__float128 x_rdft_perm[MATRIX_SIZE];
+//__float128 x_rdft_perm_iter[MATRIX_SIZE];
+//__float128 x_rdft_perm_iter_another[MATRIX_SIZE];
+//__float128 x_rdht[MATRIX_SIZE];
+//__float128 x_rdht_iter[MATRIX_SIZE];
+//__float128 x_rdht_iter_another[MATRIX_SIZE];
+//__float128 x_gauss[MATRIX_SIZE];
+//__float128 x_gauss_iter[MATRIX_SIZE];
+//__float128 x_gauss_iter_another[MATRIX_SIZE];
+//__float128 x_pp[MATRIX_SIZE];
+//__float128 x_pp_iter[MATRIX_SIZE];
+//__float128 x_pp_iter_another[MATRIX_SIZE];
+//
+//__complex128 aa[MATRIX_SIZE][MATRIX_SIZE];
+//__complex128 bb[MATRIX_SIZE];
+//__complex128 xx[MATRIX_SIZE];
+//__complex128 xi[MATRIX_SIZE];
+//__complex128 xa[MATRIX_SIZE];
 
-__complex128 aa[MATRIX_SIZE][MATRIX_SIZE];
-__complex128 bb[MATRIX_SIZE];
-__complex128 xx[MATRIX_SIZE];
-__complex128 xi[MATRIX_SIZE];
-__complex128 xa[MATRIX_SIZE];
-
-__float128 x_rdft_dif[MATRIX_SIZE];
-__float128 x_rdft_iter_dif[MATRIX_SIZE];
-__float128 x_rdft_iter_another_dif[MATRIX_SIZE];
-__float128 x_rdft_perm_dif[MATRIX_SIZE];
-__float128 x_rdft_perm_iter_dif[MATRIX_SIZE];
-__float128 x_rdft_perm_iter_another_dif[MATRIX_SIZE];
-__float128 x_rdht_dif[MATRIX_SIZE];
-__float128 x_rdht_iter_dif[MATRIX_SIZE];
-__float128 x_rdht_iter_another_dif[MATRIX_SIZE];
-__float128 x_gauss_dif[MATRIX_SIZE];
-__float128 x_gauss_iter_dif[MATRIX_SIZE];
-__float128 x_gauss_iter_another_dif[MATRIX_SIZE];
-__float128 x_pp_dif[MATRIX_SIZE];
-__float128 x_pp_iter_dif[MATRIX_SIZE];
-__float128 x_pp_iter_another_dif[MATRIX_SIZE];
-
-__float128 rdft_err;
-__float128 rdft_iter_err;
-__float128 rdft_iter_another_err;
-__float128 rdft_perm_err;
-__float128 rdft_perm_iter_err;
-__float128 rdft_perm_iter_another_err;
-__float128 rdht_err;
-__float128 rdht_iter_err;
-__float128 rdht_iter_another_err;
-__float128 gauss_err;
-__float128 gauss_iter_err;
-__float128 gauss_iter_another_err;
-__float128 pp_err;
-__float128 pp_iter_err;
-__float128 pp_iter_another_err;
+//__float128 x_rdft_dif[MATRIX_SIZE];
+//__float128 x_rdft_iter_dif[MATRIX_SIZE];
+//__float128 x_rdft_iter_another_dif[MATRIX_SIZE];
+//__float128 x_rdft_perm_dif[MATRIX_SIZE];
+//__float128 x_rdft_perm_iter_dif[MATRIX_SIZE];
+//__float128 x_rdft_perm_iter_another_dif[MATRIX_SIZE];
+//__float128 x_rdht_dif[MATRIX_SIZE];
+//__float128 x_rdht_iter_dif[MATRIX_SIZE];
+//__float128 x_rdht_iter_another_dif[MATRIX_SIZE];
+//__float128 x_gauss_dif[MATRIX_SIZE];
+//__float128 x_gauss_iter_dif[MATRIX_SIZE];
+//__float128 x_gauss_iter_another_dif[MATRIX_SIZE];
+//__float128 x_pp_dif[MATRIX_SIZE];
+//__float128 x_pp_iter_dif[MATRIX_SIZE];
+//__float128 x_pp_iter_another_dif[MATRIX_SIZE];
+//
+//__float128 rdft_err;
+//__float128 rdft_iter_err;
+//__float128 rdft_iter_another_err;
+//__float128 rdft_perm_err;
+//__float128 rdft_perm_iter_err;
+//__float128 rdft_perm_iter_another_err;
+//__float128 rdht_err;
+//__float128 rdht_iter_err;
+//__float128 rdht_iter_another_err;
+//__float128 gauss_err;
+//__float128 gauss_iter_err;
+//__float128 gauss_iter_another_err;
+//__float128 pp_err;
+//__float128 pp_iter_err;
+//__float128 pp_iter_another_err;
 
 // for calc condition number
 double double_a[MATRIX_SIZE][MATRIX_SIZE];
@@ -557,188 +557,188 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
   }
 }
 
-void run_128bit(int dat, int opt, int exe, int band_size){
-  generate_linear_system_float_128(a,x,100.0Q, band_size);
-  mat_vec_dot_float128(a,x,b);
-
-  // [CARE] this must change the result
-  //down_cast_vec_float_128(b,b);
-
-  cast_mat_float128_to_complex128(a,aa);
-  cast_vec_float128_to_complex128(b,bb);
-
-  if(exe & (RDFT | RDFT_ITERATION)){
-    solve_with_rdft_iteration_complex128(aa, bb, xx, xi, xa);
-    cast_vec_complex128_to_float128(xx, x_rdft);
-    cast_vec_complex128_to_float128(xi, x_rdft_iter);
-    cast_vec_complex128_to_float128(xa, x_rdft_iter_another);
-    vec_sub_float128(x,x_rdft,x_rdft_dif);
-    vec_sub_float128(x,x_rdft_iter,x_rdft_iter_dif);
-    vec_sub_float128(x,x_rdft_iter_another,x_rdft_iter_another_dif);
-    rdft_err = vector_norm_float128(x_rdft_dif);
-    rdft_iter_err = vector_norm_float128(x_rdft_iter_dif);
-    rdft_iter_another_err = vector_norm_float128(x_rdft_iter_another_dif);
-  }
-  if(exe & (DHT | DHT_ITERATION)){
-    solve_with_rdht_iteration_float128(a, b, x_rdht, x_rdht_iter, x_rdht_iter_another);
-    vec_sub_float128(x,x_rdht,x_rdht_dif);
-    vec_sub_float128(x,x_rdht_iter,x_rdht_iter_dif);
-    vec_sub_float128(x,x_rdht_iter_another,x_rdht_iter_another_dif);
-    rdht_err = vector_norm_float128(x_rdht_dif);
-    rdht_iter_err = vector_norm_float128(x_rdht_iter_dif);
-    rdht_iter_another_err = vector_norm_float128(x_rdht_iter_another_dif);
-  }
-  if(exe & (GAUSS | GAUSS_ITERATION)){
-    solve_with_gauss_iteration_float128(a, b, x_gauss, x_gauss_iter, x_gauss_iter_another);
-    vec_sub_float128(x,x_gauss,x_gauss_dif);
-    vec_sub_float128(x,x_gauss_iter,x_gauss_iter_dif);
-    vec_sub_float128(x,x_gauss_iter_another,x_gauss_iter_another_dif);
-    gauss_err = vector_norm_float128(x_gauss_dif);
-    gauss_iter_err = vector_norm_float128(x_gauss_iter_dif);
-    gauss_iter_another_err = vector_norm_float128(x_gauss_iter_another_dif);
-  }
-  if(exe & (PP | PP_ITERATION)){
-    solve_with_partial_pivot_float128(a,b,x_pp, x_pp_iter, x_pp_iter_another);
-    vec_sub_float128(x,x_pp,x_pp_dif);
-    vec_sub_float128(x,x_pp_iter,x_pp_iter_dif);
-    vec_sub_float128(x,x_pp_iter_another,x_pp_iter_another_dif);
-    pp_err   = vector_norm_float128(x_pp_dif);
-    pp_iter_err   = vector_norm_float128(x_pp_iter_dif);
-    pp_iter_another_err   = vector_norm_float128(x_pp_iter_another_dif);
-  }
-
-  cast_mat_float128_to_double(a,double_a);
-
-  if(opt == 0){
-    printf("condition number:");
-    printf("%f\n", condition_number(double_a, NULL));
-    printf("RDFT           :");
-    print_float128(rdft_err);
-    printf("\n");
-    printf("RDFT iteration :");
-    print_float128(rdft_iter_err);
-    printf("\n");
-    printf("RDFT iteration :");
-    print_float128(rdft_iter_another_err);
-    printf("\n");
-    print_float128(rdft_perm_err);
-    printf("\n");
-    printf("RDFT iteration :");
-    print_float128(rdft_perm_iter_err);
-    printf("\n");
-    printf("RDFT iteration :");
-    print_float128(rdft_perm_iter_another_err);
-    printf("\n");
-    printf("RDHT           :");
-    print_float128(rdht_err);
-    printf("\n");
-    printf("RDHT iteration :");
-    print_float128(rdht_iter_err);
-    printf("\n");
-    printf("RDHT iteration :");
-    print_float128(rdht_iter_another_err);
-    printf("\n");
-    printf("GAUSS          :");
-    print_float128(gauss_err);
-    printf("\n");
-    printf("GAUSS iteration:");
-    print_float128(gauss_iter_err);
-    printf("\n");
-    printf("GAUSS iteration:");
-    print_float128(gauss_iter_another_err);
-    printf("\n");
-    printf("Partial Pivot  :");
-    print_float128(pp_err);
-    printf("\n");
-    printf("Partial Pivot  :");
-    print_float128(pp_iter_err);
-    printf("\n");
-    printf("Partial Pivot  :");
-    print_float128(pp_iter_another_err);
-    printf("\n");
-  }else if(opt == 1){ // graph data
-    printf("%f ", condition_number(double_a,NULL));
-    print_float128(rdft_err);
-    printf(" ");
-    print_float128(rdft_iter_err);
-    printf(" ");
-    print_float128(rdft_iter_another_err);
-    printf(" ");
-    print_float128(rdht_err);
-    printf(" ");
-    print_float128(rdht_iter_err);
-    printf(" ");
-    print_float128(rdht_iter_another_err);
-    printf(" ");
-    print_float128(gauss_err);
-    printf(" ");
-    print_float128(gauss_iter_err);
-    printf(" ");
-    print_float128(gauss_iter_another_err);
-    printf(" ");
-    print_float128(pp_err);
-    printf(" ");
-    print_float128(pp_iter_err);
-    printf(" ");
-    print_float128(pp_iter_another_err);
-    printf("\n");
-  }else if(opt == 2){
-    printf("condition number:");
-    printf("%f\n", condition_number(double_a,NULL));
-    if(exe & RDFT){
-      printf("RDFT           :");
-      print_float128(rdft_err);
-      printf("\n");
-    }
-    if(exe & RDFT_ITERATION){
-      printf("RDFT iteration :");
-      print_float128(rdft_iter_err);
-      printf("\n");
-      printf("RDFT iteration :");
-      print_float128(rdft_iter_another_err);
-      printf("\n");
-    }
-    if(exe & DHT){
-      printf("DHT            :");
-      print_float128(rdht_err);
-      printf("\n");
-    }
-    if(exe & DHT_ITERATION){
-      printf("DHT iteration  :");
-      print_float128(rdht_iter_err);
-      printf("\n");
-      printf("DHT iteration  :");
-      print_float128(rdht_iter_another_err);
-      printf("\n");
-    }
-    if(exe & GAUSS){
-      printf("GAUSS          :");
-      print_float128(gauss_err);
-      printf("\n");
-    }
-    if(exe & GAUSS_ITERATION){
-      printf("GAUSS iteration:");
-      print_float128(gauss_iter_err);
-      printf("\n");
-      printf("GAUSS iteration:");
-      print_float128(gauss_iter_another_err);
-      printf("\n");
-    }
-    if(exe & PP){
-      printf("Partial Pivot  :");
-      print_float128(pp_err);
-      printf("\n");
-    }
-    if(exe & PP_ITERATION){
-      printf("Partial Pivot  :");
-      print_float128(pp_iter_err);
-      printf("\n");
-      printf("Partial Pivot  :");
-      print_float128(pp_iter_another_err);
-      printf("\n");
-    }
-  }
-}
+//void run_128bit(int dat, int opt, int exe, int band_size){
+//  generate_linear_system_float_128(a,x,100.0Q, band_size);
+//  mat_vec_dot_float128(a,x,b);
+//
+//  // [CARE] this must change the result
+//  //down_cast_vec_float_128(b,b);
+//
+//  cast_mat_float128_to_complex128(a,aa);
+//  cast_vec_float128_to_complex128(b,bb);
+//
+//  if(exe & (RDFT | RDFT_ITERATION)){
+//    solve_with_rdft_iteration_complex128(aa, bb, xx, xi, xa);
+//    cast_vec_complex128_to_float128(xx, x_rdft);
+//    cast_vec_complex128_to_float128(xi, x_rdft_iter);
+//    cast_vec_complex128_to_float128(xa, x_rdft_iter_another);
+//    vec_sub_float128(x,x_rdft,x_rdft_dif);
+//    vec_sub_float128(x,x_rdft_iter,x_rdft_iter_dif);
+//    vec_sub_float128(x,x_rdft_iter_another,x_rdft_iter_another_dif);
+//    rdft_err = vector_norm_float128(x_rdft_dif);
+//    rdft_iter_err = vector_norm_float128(x_rdft_iter_dif);
+//    rdft_iter_another_err = vector_norm_float128(x_rdft_iter_another_dif);
+//  }
+//  if(exe & (DHT | DHT_ITERATION)){
+//    solve_with_rdht_iteration_float128(a, b, x_rdht, x_rdht_iter, x_rdht_iter_another);
+//    vec_sub_float128(x,x_rdht,x_rdht_dif);
+//    vec_sub_float128(x,x_rdht_iter,x_rdht_iter_dif);
+//    vec_sub_float128(x,x_rdht_iter_another,x_rdht_iter_another_dif);
+//    rdht_err = vector_norm_float128(x_rdht_dif);
+//    rdht_iter_err = vector_norm_float128(x_rdht_iter_dif);
+//    rdht_iter_another_err = vector_norm_float128(x_rdht_iter_another_dif);
+//  }
+//  if(exe & (GAUSS | GAUSS_ITERATION)){
+//    solve_with_gauss_iteration_float128(a, b, x_gauss, x_gauss_iter, x_gauss_iter_another);
+//    vec_sub_float128(x,x_gauss,x_gauss_dif);
+//    vec_sub_float128(x,x_gauss_iter,x_gauss_iter_dif);
+//    vec_sub_float128(x,x_gauss_iter_another,x_gauss_iter_another_dif);
+//    gauss_err = vector_norm_float128(x_gauss_dif);
+//    gauss_iter_err = vector_norm_float128(x_gauss_iter_dif);
+//    gauss_iter_another_err = vector_norm_float128(x_gauss_iter_another_dif);
+//  }
+//  if(exe & (PP | PP_ITERATION)){
+//    solve_with_partial_pivot_float128(a,b,x_pp, x_pp_iter, x_pp_iter_another);
+//    vec_sub_float128(x,x_pp,x_pp_dif);
+//    vec_sub_float128(x,x_pp_iter,x_pp_iter_dif);
+//    vec_sub_float128(x,x_pp_iter_another,x_pp_iter_another_dif);
+//    pp_err   = vector_norm_float128(x_pp_dif);
+//    pp_iter_err   = vector_norm_float128(x_pp_iter_dif);
+//    pp_iter_another_err   = vector_norm_float128(x_pp_iter_another_dif);
+//  }
+//
+//  cast_mat_float128_to_double(a,double_a);
+//
+//  if(opt == 0){
+//    printf("condition number:");
+//    printf("%f\n", condition_number(double_a, NULL));
+//    printf("RDFT           :");
+//    print_float128(rdft_err);
+//    printf("\n");
+//    printf("RDFT iteration :");
+//    print_float128(rdft_iter_err);
+//    printf("\n");
+//    printf("RDFT iteration :");
+//    print_float128(rdft_iter_another_err);
+//    printf("\n");
+//    print_float128(rdft_perm_err);
+//    printf("\n");
+//    printf("RDFT iteration :");
+//    print_float128(rdft_perm_iter_err);
+//    printf("\n");
+//    printf("RDFT iteration :");
+//    print_float128(rdft_perm_iter_another_err);
+//    printf("\n");
+//    printf("RDHT           :");
+//    print_float128(rdht_err);
+//    printf("\n");
+//    printf("RDHT iteration :");
+//    print_float128(rdht_iter_err);
+//    printf("\n");
+//    printf("RDHT iteration :");
+//    print_float128(rdht_iter_another_err);
+//    printf("\n");
+//    printf("GAUSS          :");
+//    print_float128(gauss_err);
+//    printf("\n");
+//    printf("GAUSS iteration:");
+//    print_float128(gauss_iter_err);
+//    printf("\n");
+//    printf("GAUSS iteration:");
+//    print_float128(gauss_iter_another_err);
+//    printf("\n");
+//    printf("Partial Pivot  :");
+//    print_float128(pp_err);
+//    printf("\n");
+//    printf("Partial Pivot  :");
+//    print_float128(pp_iter_err);
+//    printf("\n");
+//    printf("Partial Pivot  :");
+//    print_float128(pp_iter_another_err);
+//    printf("\n");
+//  }else if(opt == 1){ // graph data
+//    printf("%f ", condition_number(double_a,NULL));
+//    print_float128(rdft_err);
+//    printf(" ");
+//    print_float128(rdft_iter_err);
+//    printf(" ");
+//    print_float128(rdft_iter_another_err);
+//    printf(" ");
+//    print_float128(rdht_err);
+//    printf(" ");
+//    print_float128(rdht_iter_err);
+//    printf(" ");
+//    print_float128(rdht_iter_another_err);
+//    printf(" ");
+//    print_float128(gauss_err);
+//    printf(" ");
+//    print_float128(gauss_iter_err);
+//    printf(" ");
+//    print_float128(gauss_iter_another_err);
+//    printf(" ");
+//    print_float128(pp_err);
+//    printf(" ");
+//    print_float128(pp_iter_err);
+//    printf(" ");
+//    print_float128(pp_iter_another_err);
+//    printf("\n");
+//  }else if(opt == 2){
+//    printf("condition number:");
+//    printf("%f\n", condition_number(double_a,NULL));
+//    if(exe & RDFT){
+//      printf("RDFT           :");
+//      print_float128(rdft_err);
+//      printf("\n");
+//    }
+//    if(exe & RDFT_ITERATION){
+//      printf("RDFT iteration :");
+//      print_float128(rdft_iter_err);
+//      printf("\n");
+//      printf("RDFT iteration :");
+//      print_float128(rdft_iter_another_err);
+//      printf("\n");
+//    }
+//    if(exe & DHT){
+//      printf("DHT            :");
+//      print_float128(rdht_err);
+//      printf("\n");
+//    }
+//    if(exe & DHT_ITERATION){
+//      printf("DHT iteration  :");
+//      print_float128(rdht_iter_err);
+//      printf("\n");
+//      printf("DHT iteration  :");
+//      print_float128(rdht_iter_another_err);
+//      printf("\n");
+//    }
+//    if(exe & GAUSS){
+//      printf("GAUSS          :");
+//      print_float128(gauss_err);
+//      printf("\n");
+//    }
+//    if(exe & GAUSS_ITERATION){
+//      printf("GAUSS iteration:");
+//      print_float128(gauss_iter_err);
+//      printf("\n");
+//      printf("GAUSS iteration:");
+//      print_float128(gauss_iter_another_err);
+//      printf("\n");
+//    }
+//    if(exe & PP){
+//      printf("Partial Pivot  :");
+//      print_float128(pp_err);
+//      printf("\n");
+//    }
+//    if(exe & PP_ITERATION){
+//      printf("Partial Pivot  :");
+//      print_float128(pp_iter_err);
+//      printf("\n");
+//      printf("Partial Pivot  :");
+//      print_float128(pp_iter_another_err);
+//      printf("\n");
+//    }
+//  }
+//}
 
 extern __complex128 c_f[MATRIX_SIZE][MATRIX_SIZE];
 extern __complex128 c_r[MATRIX_SIZE][MATRIX_SIZE];
@@ -782,18 +782,19 @@ int main(){
   // int exe = RDFT_PERM | RDFT_PERM_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | RDFT_GIVENS_TWO | RDFT_GIVENS_TWO_ITERATION | RDFT_BOTH_GIVENS | RDFT_BOTH_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION;
   //int exe = RDFT | RDFT_ITERATION | RDFT_PERM | RDFT_PERM_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
   int exe = (ALL)^(LIB);
-  //for(i=0; i<MATRIX_SIZE/2; i++){
-  for(i=0; i<100; i++){
-    //for(j=0; j<4; j++)
+
+  for(i=0; i<MATRIX_SIZE/2; i++){
+  //for(i=0; i<100; i++){
+    for(j=0; j<3; j++)
       run_64bit(i,1,exe, i+1, MATRIX_SIZE);
     fprintf(stderr, "%d ", i);
     //fprintf(stderr, "%d ", MATRIX_SIZE);
   }
   // for rounding relationship on PP
-  if((exe^(PP | PP_ITERATION)) == 0){
-    printf("Non-err  :%d:With-Rerr:%d\n", general_counter_0, general_counter_1);
-    printf("Non-err  :%d:With-Rerr:%d\n", general_counter_2, general_counter_3);
-  }
+  //if((exe^(PP | PP_ITERATION)) == 0){
+  //  printf("Non-err  :%d:With-Rerr:%d\n", general_counter_0, general_counter_1);
+  //  printf("Non-err  :%d:With-Rerr:%d\n", general_counter_2, general_counter_3);
+  //}
 
   //for(i=0; i<50; i++){
   //  singular_value_test();
