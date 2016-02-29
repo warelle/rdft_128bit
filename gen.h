@@ -2,6 +2,9 @@
 #define MYGEN_H
 
 #include "test.h"
+#include <stdlib.h>
+#include <math.h>
+#include "rdft.h"
 
 // return: random value
 double uniform();
@@ -22,7 +25,6 @@ void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __fl
 void generate_linear_system_float_128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 vec[MATRIX_SIZE], __float128 range, int band_size);
 void generate_linear_system_complex_128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __complex128 vec[MATRIX_SIZE], __float128 range);
 
-
 // specific matrix generator
 void gen_identity_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
 void gen_random_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range);
@@ -30,5 +32,18 @@ void gen_arrowhead_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128
 void gen_diag_big_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range);
 void gen_band_no_side_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range, int band_size);
 void gen_band_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range, int band_size);
+
+void gen_normal_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+void gen_uniform_absone_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+void gen_uniform_positive_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+void gen_set_absone_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+void gen_set_abspositive_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+
+void gen_ijabs_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+void gen_maxij_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+
+void gen_gfpp_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+void gen_fiedler_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
+void gen_hadamard_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]);
 
 #endif

@@ -95,7 +95,6 @@ void lu_solver_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE],
 //  for(int i=0; i<MATRIX_SIZE; i++)
 //    x[i] = xx(i);
 }
-
 double condition_number(double a[MATRIX_SIZE][MATRIX_SIZE], double *sa){
   MatrixXd mat =  Map<Matrix<double, Dynamic, Dynamic> >(&(a[0][0]), MATRIX_SIZE, MATRIX_SIZE);
   JacobiSVD<MatrixXd> svd(mat);

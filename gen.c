@@ -1,8 +1,42 @@
 #include "gen.h"
 #include "lib.h"
+#include "matlib.h"
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+
+
+// --------------------------------------------------------
+int ccc[MATRIX_SIZE+2][MATRIX_SIZE+2];
+int combination(int i, int j){
+  if(i < 0 || j < 0){
+    return 1;
+  }
+  if(ccc[i][j] != 0){
+    return ccc[i][j];
+  }
+  if(j == 0 || i <= j){
+    ccc[i][j] = 1;
+    return ccc[i][j];
+  }
+  ccc[i][j] = combination(i-1,j-1) + combination(i-1,j);
+  if(i > j)
+    ccc[i][i-j] = ccc[i][j];
+  return ccc[i][j];
+}
+unsigned msb(unsigned n){
+  n|=n>>1; n|=n>>2; n|=n>>4;
+  n|=n>>8; n|=n>>16;
+  return n^(n>>1);
+}
+int hadamard(int y,int x){int m,n;
+  if(x==0||y==0)return  1;
+  if(x==1&&y==1)return -1;
+  n=(m=msb(x|y))-1;
+  m=(m<=x&&m<=y)?-1:1;
+  return m*hadamard(y&n,x&n);
+}
+// --------------------------------------------------------
 
 // return: random value
 double uniform(){
@@ -56,7 +90,21 @@ void generate_matrix_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float1
 //  gen_arrowhead_float128(mat,range);
 //  gen_identity_float128(mat);
 //  gen_band_no_side_float128(mat, range, band_size);
-  gen_band_float128(mat, range, band_size);
+//  gen_band_float128(mat, range, band_size);
+
+//  gen_normal_float128(mat);
+//  gen_uniform_absone_float128(mat);
+//  gen_uniform_positive_float128(mat);
+//  gen_set_absone_float128(mat);
+//  gen_set_abspositive_float128(mat);
+
+//  gen_ijabs_float128(mat);
+//  gen_maxij_float128(mat);
+
+//  gen_gfpp_float128(mat);
+//  gen_fiedler_float128(mat);
+  gen_hadamard_float128(mat);
+
 }
 void generate_matrix_complex128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 range){
   int i,j;
@@ -74,7 +122,6 @@ void generate_linear_system_complex_128(__complex128 mat[MATRIX_SIZE][MATRIX_SIZ
   generate_matrix_complex128(mat, range);
   generate_vector_complex128(vec, range);
 }
-
 
 /*--- specific type of matrices ---*/
 void gen_identity_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
@@ -149,3 +196,110 @@ void gen_band_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE], __float128 rang
       else
         mat[i][j] = 0.0Q;
 }
+
+
+/*--- specific type of matrices ---*/
+void gen_normal_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = rand_normal_double(0,1);
+    }
+  }
+}
+void gen_uniform_absone_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = uniform() * (rand_normal_double(0,1) > 0 ? -1 : 1);
+    }
+  }
+}
+void gen_uniform_positive_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = uniform();
+    }
+  }
+}
+void gen_set_absone_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = rand_normal_double(0,1) > 0 ? -1 : 1;
+    }
+  }
+}
+void gen_set_abspositive_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = rand_normal_double(0,1) > 0 ? 0 : 1;
+    }
+  }
+}
+
+void gen_ijabs_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = (i-j)>0 ? i-j:j-i;
+    }
+  }
+}
+void gen_maxij_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = i>j ? i : j;
+    }
+  }
+}
+
+void gen_gfpp_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      if(i<j){
+        mat[i][j] = 0;
+      }else if(i==j){
+        mat[i][j] = 1.0;
+      }else{
+        mat[i][j] = -1.0;
+      }
+    }
+    mat[i][MATRIX_SIZE-1] = 1.0;
+  }
+}
+
+void gen_fiedler_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j,k;
+  for(i=0; i<MATRIX_SIZE; i++){
+    int ret_flg = 0;
+    k = i;
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = k;
+      if(ret_flg == 0){
+        k--;
+        if(k < 0){
+          ret_flg = 1;
+          k = 0;
+        }
+      }else{
+        k++;
+      }
+    }
+  }
+}
+
+void gen_hadamard_float128(__float128 mat[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      mat[i][j] = hadamard(i,j);
+    }
+  }
+}
+
+

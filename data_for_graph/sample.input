@@ -5,6 +5,7 @@
 
 set ylabel "2-norm error"
 set xlabel "condition number"
+#set xlabel "matrix size"
 
 set logscale x
 set format x '%.1e'

@@ -88,6 +88,28 @@ void init_for_perm(){
   init_for_perm_flg = 1;
 }
 
+void perm_matrix_double(double r[MATRIX_SIZE][MATRIX_SIZE]){
+  int i,j;
+  std::random_device rd;
+	std::mt19937 mt(rd());
+
+  if(! init_for_perm_flg){
+    init_for_perm();
+  }
+
+  for(i=0; i<MATRIX_SIZE; i++){
+    for(j=0; j<MATRIX_SIZE; j++){
+      r[i][j] = 0;
+    }
+  }
+
+  std::vector<int> perm(for_perm,for_perm+MATRIX_SIZE);
+  for(i=0; i<MATRIX_SIZE; i++){
+    int idx = mt() % (MATRIX_SIZE - i);
+    r[i][perm[idx]] = 1.0;
+    perm.erase(perm.begin()+idx);
+  }
+}
 void r_perm_matrix_complex_double(std::complex<double> r[MATRIX_SIZE][MATRIX_SIZE]){
   int i,j;
   double nn = MATRIX_SIZE;

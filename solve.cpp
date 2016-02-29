@@ -93,6 +93,25 @@ std::complex<double> cd_ax[MATRIX_SIZE];
 double tmp0[MATRIX_SIZE][MATRIX_SIZE];
 double tmp1[MATRIX_SIZE][MATRIX_SIZE];
 double tmp2[MATRIX_SIZE];
+void solve_without_pivot_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE], double xi[MATRIX_SIZE], double xia[MATRIX_SIZE]){
+  int i;
+
+  for(i=0; i<MATRIX_SIZE; i++)
+    d_bp[i] = b[i];
+
+  lu_double(a, d_l, d_u);
+
+  l_step_double(d_l, d_bp, d_y);
+  u_step_double(d_u, d_y, x);
+
+  for(i=0; i<MATRIX_SIZE; i++){
+    xi[i] = x[i];
+    xia[i] = x[i];
+  }
+
+  iteration_double(d_ap,d_l, d_u, d_bp, xi);
+  iteration_double_another(d_perm, a,d_l, d_u, b, xia);
+}
 void solve_with_partial_pivot_double(double a[MATRIX_SIZE][MATRIX_SIZE], double b[MATRIX_SIZE], double x[MATRIX_SIZE], double xi[MATRIX_SIZE], double xia[MATRIX_SIZE]){
   int i,j;
   int p[MATRIX_SIZE]; // the last element is not used

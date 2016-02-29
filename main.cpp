@@ -14,8 +14,8 @@
 #define NONE                       0
 #define RDFT                       1
 #define RDFT_ITERATION             2
-#define DHT                        4
-#define DHT_ITERATION              8
+#define GENP                        4
+#define GENP_ITERATION              8
 #define GAUSS                      16
 #define GAUSS_ITERATION            32
 #define PP                         64
@@ -133,6 +133,9 @@ double d_x_pp_iter_another[MATRIX_SIZE];
 double d_x_pp_with_round_error[MATRIX_SIZE];
 double d_x_pp_iter_with_round_error[MATRIX_SIZE];
 double d_x_pp_iter_another_with_round_error[MATRIX_SIZE];
+double d_x_np[MATRIX_SIZE];
+double d_x_np_iter[MATRIX_SIZE];
+double d_x_np_iter_another[MATRIX_SIZE];
 double d_x_lib[MATRIX_SIZE];
 
 double d_x_rdft_dif[MATRIX_SIZE];
@@ -156,6 +159,9 @@ double d_x_rdht_iter_another_dif[MATRIX_SIZE];
 double d_x_gauss_dif[MATRIX_SIZE];
 double d_x_gauss_iter_dif[MATRIX_SIZE];
 double d_x_gauss_iter_another_dif[MATRIX_SIZE];
+double d_x_np_dif[MATRIX_SIZE];
+double d_x_np_iter_dif[MATRIX_SIZE];
+double d_x_np_iter_another_dif[MATRIX_SIZE];
 double d_x_pp_dif[MATRIX_SIZE];
 double d_x_pp_iter_dif[MATRIX_SIZE];
 double d_x_pp_iter_another_dif[MATRIX_SIZE];
@@ -185,6 +191,9 @@ double d_rdht_iter_another_err;
 double d_gauss_err;
 double d_gauss_iter_err;
 double d_gauss_iter_another_err;
+double d_np_err;
+double d_np_iter_err;
+double d_np_iter_another_err;
 double d_pp_err;
 double d_pp_iter_err;
 double d_pp_iter_another_err;
@@ -208,7 +217,17 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
   cast_mat_double_to_complex_double(d_a,dc_aa);
   cast_vec_double_to_complex_double(d_b,dc_bb);
 
+  cast_mat_float128_to_double(a,double_a);
 
+  if(exe & (GENP | GENP_ITERATION)){
+    solve_without_pivot_double(d_a,d_b,d_x_np, d_x_np_iter, d_x_np_iter_another);
+    vec_sub_double(d_x,d_x_np,d_x_np_dif);
+    vec_sub_double(d_x,d_x_np_iter,d_x_np_iter_dif);
+    vec_sub_double(d_x,d_x_np_iter_another,d_x_np_iter_another_dif);
+    d_np_err   = vector_norm_double(d_x_np_dif);
+    d_np_iter_err   = vector_norm_double(d_x_np_iter_dif);
+    d_np_iter_another_err   = vector_norm_double(d_x_np_iter_another_dif);
+  }
   if(exe & (RDFT | RDFT_ITERATION)){
     solve_with_rdft_iteration_complex_double(dc_aa, dc_bb, dc_xx, dc_xi, dc_xa);
     cast_vec_complex_double_to_double(dc_xx, d_x_rdft);
@@ -302,7 +321,6 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     d_lib_err   = vector_norm_double(d_x_lib_dif);
   }
 
-  cast_mat_float128_to_double(a,double_a);
 
   if(opt == 0){
     printf("condition number:");
@@ -427,6 +445,8 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
     print_double(d_pp_iter_err);
     printf(" ");
     print_double(d_pp_iter_another_err);
+    printf(" ");
+    print_double(d_np_err);
     //printf(" ");
     //print_double(d_pp_with_round_error_err);
     //printf(" ");
@@ -515,6 +535,19 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
       printf("\n");
       printf("GAUSS iteration    :");
       print_double(d_gauss_iter_another_err);
+      printf("\n");
+    }
+    if(exe & GENP){
+      printf("GENP               :");
+      print_double(d_np_err);
+      printf("\n");
+    }
+    if(exe & GENP_ITERATION){
+      printf("GENP               :");
+      print_double(d_np_iter_err);
+      printf("\n");
+      printf("GENP               :");
+      print_double(d_np_iter_another_err);
       printf("\n");
     }
     if(exe & PP){
@@ -740,10 +773,10 @@ void run_64bit(int dat, int opt, int exe, int band_size, int x_axis){
 //  }
 //}
 
-extern __complex128 c_f[MATRIX_SIZE][MATRIX_SIZE];
-extern __complex128 c_r[MATRIX_SIZE][MATRIX_SIZE];
-extern __complex128 c_fr[MATRIX_SIZE][MATRIX_SIZE];
-extern __complex128 c_fra[MATRIX_SIZE][MATRIX_SIZE];
+// extern __complex128 c_f[MATRIX_SIZE][MATRIX_SIZE];
+// extern __complex128 c_r[MATRIX_SIZE][MATRIX_SIZE];
+// extern __complex128 c_fr[MATRIX_SIZE][MATRIX_SIZE];
+// extern __complex128 c_fra[MATRIX_SIZE][MATRIX_SIZE];
 
 //void singular_value_test(){
 //  int i;
@@ -783,9 +816,10 @@ int main(){
   //int exe = RDFT | RDFT_ITERATION | RDFT_PERM | RDFT_PERM_ITERATION | RDFT_GIVENS | RDFT_GIVENS_ITERATION | GAUSS | GAUSS_ITERATION | PP | PP_ITERATION;
   int exe = (ALL)^(LIB);
 
-  for(i=0; i<MATRIX_SIZE/2; i++){
-  //for(i=0; i<100; i++){
-    for(j=0; j<3; j++)
+// NORMAL UNIFORM_ABS_ONE UNIFORM_POSITIVE SET_ABS_ONE SET_POSITIVE IJ_ABS MAX_IJ CIRCULANT HADAMARD PERMUTE TURING
+  //for(i=0; i<MATRIX_SIZE/2; i++){
+  for(i=0; i<100; i++){
+    //for(j=0; j<3; j++)
       run_64bit(i,1,exe, i+1, MATRIX_SIZE);
     fprintf(stderr, "%d ", i);
     //fprintf(stderr, "%d ", MATRIX_SIZE);
